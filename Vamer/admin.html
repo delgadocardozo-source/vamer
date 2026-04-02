@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VAMER | Centro de mando del sitio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        vamerBlue: "#0f2f68",
+                        vamerBlueSoft: "#1c438a",
+                        vamerGold: "#b8932f"
+                    }
+                }
+            }
+        };
+    </script>
+    <style>
+        html { scroll-behavior: smooth; }
+        .cms-nav-link.active { background: #0f2f68; color: #fff; }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen">
+    <header class="bg-vamerBlue text-white shadow z-40 sticky top-0">
+        <div class="max-w-[1400px] mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+            <div>
+                <h1 class="text-lg font-black tracking-tight">Centro de mando VAMER</h1>
+                <p class="text-[11px] text-blue-200 mt-0.5 max-w-xl">Los campos se rellenan con los mismos textos que <code class="bg-white/10 px-1 rounded">data/site-config.json</code> (y una copia de respaldo si abris el archivo sin servidor). Tus cambios guardados en el navegador se fusionan encima: podes editar una sola palabra sin perder el resto.</p>
+            </div>
+            <div class="flex flex-wrap items-center gap-2">
+                <button type="button" id="btn-save-visual" class="px-4 py-2 rounded-lg bg-vamerGold text-white text-sm font-bold hover:opacity-90 shadow">Guardar todos los cambios</button>
+                <a href="vamer.html" target="_blank" rel="noopener noreferrer" class="inline-flex items-center px-4 py-2 rounded-lg bg-white/15 text-sm font-semibold hover:bg-white/25">Ver sitio</a>
+            </div>
+        </div>
+    </header>
+
+    <div id="status-line" class="hidden max-w-[1400px] mx-auto px-4 pt-4 text-sm font-semibold rounded-lg"></div>
+
+    <div class="max-w-[1400px] mx-auto px-4 py-6 flex flex-col lg:flex-row gap-6 items-start">
+        <aside class="w-full lg:w-56 shrink-0 lg:sticky lg:top-[72px] space-y-1">
+            <p class="text-[10px] uppercase font-bold text-slate-400 px-2 mb-2">Secciones</p>
+            <nav id="cms-side-nav" class="flex lg:flex-col flex-wrap gap-1 bg-white rounded-xl border border-slate-200 p-2 shadow-sm">
+                <a class="cms-nav-link block px-3 py-2 rounded-lg text-sm font-semibold text-slate-700 hover:bg-slate-100" href="#sec-general">General y marca</a>
+                <a class="cms-nav-link block px-3 py-2 rounded-lg text-sm font-semibold text-slate-700 hover:bg-slate-100" href="#sec-nav">Menu</a>
+                <a class="cms-nav-link block px-3 py-2 rounded-lg text-sm font-semibold text-slate-700 hover:bg-slate-100" href="#sec-hero-p">Hero presentacion</a>
+                <a class="cms-nav-link block px-3 py-2 rounded-lg text-sm font-semibold text-slate-700 hover:bg-slate-100" href="#sec-hero-l">Hero captacion</a>
+                <a class="cms-nav-link block px-3 py-2 rounded-lg text-sm font-semibold text-slate-700 hover:bg-slate-100" href="#sec-hero-modes">Hero: interruptores</a>
+                <a class="cms-nav-link block px-3 py-2 rounded-lg text-sm font-semibold text-slate-700 hover:bg-slate-100" href="#sec-metrics">Metricas</a>
+                <a class="cms-nav-link block px-3 py-2 rounded-lg text-sm font-semibold text-slate-700 hover:bg-slate-100" href="#sec-valor">Propuesta de valor</a>
+                <a class="cms-nav-link block px-3 py-2 rounded-lg text-sm font-semibold text-slate-700 hover:bg-slate-100" href="#sec-enc">Encarnacion</a>
+                <a class="cms-nav-link block px-3 py-2 rounded-lg text-sm font-semibold text-slate-700 hover:bg-slate-100" href="#sec-legal">Legal</a>
+                <a class="cms-nav-link block px-3 py-2 rounded-lg text-sm font-semibold text-slate-700 hover:bg-slate-100" href="#sec-testi">Testimonios</a>
+                <a class="cms-nav-link block px-3 py-2 rounded-lg text-sm font-semibold text-slate-700 hover:bg-slate-100" href="#sec-lotes">Textos lotes</a>
+                <a class="cms-nav-link block px-3 py-2 rounded-lg text-sm font-semibold text-slate-700 hover:bg-slate-100" href="#sec-admin-panel">Panel ejecutivo (demo)</a>
+                <a class="cms-nav-link block px-3 py-2 rounded-lg text-sm font-semibold text-slate-700 hover:bg-slate-100" href="#sec-login">Login</a>
+                <a class="cms-nav-link block px-3 py-2 rounded-lg text-sm font-semibold text-slate-700 hover:bg-slate-100" href="#sec-wa">WhatsApp</a>
+                <a class="cms-nav-link block px-3 py-2 rounded-lg text-sm font-semibold text-slate-700 hover:bg-slate-100" href="#sec-footer">Pie de pagina</a>
+                <a class="cms-nav-link block px-3 py-2 rounded-lg text-sm font-semibold text-amber-800 hover:bg-amber-50" href="#sec-advanced">Avanzado (JSON)</a>
+                <a class="cms-nav-link block px-3 py-2 rounded-lg text-sm font-semibold text-amber-800 hover:bg-amber-50" href="#sec-prices">Precios (JSON)</a>
+            </nav>
+            <button type="button" id="btn-reload-file" class="mt-3 w-full text-xs font-semibold text-slate-600 py-2 rounded-lg border border-slate-200 bg-white hover:bg-slate-50">Borrar copia del navegador y recargar textos desde archivo</button>
+        </aside>
+
+        <div class="flex-1 min-w-0 space-y-8" id="visual-form-root">
+
+            <section id="sec-general" class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 scroll-mt-24">
+                <h2 class="text-lg font-black text-vamerBlue mb-4">General y marca</h2>
+                <div class="grid sm:grid-cols-2 gap-4">
+                    <div class="sm:col-span-2">
+                        <label class="block text-xs font-bold text-slate-500 mb-1">Titulo de la pestana del navegador</label>
+                        <input type="text" data-cms="meta.pageTitle" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 mb-1">Fuente (nombre mostrado)</label>
+                        <input type="text" data-cms="meta.fontName" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm" placeholder="Inter">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 mb-1">Preset Google Font (opcional)</label>
+                        <select id="font-preset" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm">
+                            <option value="">— Elegir para rellenar parametro abajo —</option>
+                            <option value="Inter:wght@400;500;600;700;800;900">Inter</option>
+                            <option value="DM+Sans:wght@400;500;600;700">DM Sans</option>
+                            <option value="Plus+Jakarta+Sans:wght@400;500;600;700;800">Plus Jakarta Sans</option>
+                            <option value="Manrope:wght@400;500;600;700;800">Manrope</option>
+                            <option value="Outfit:wght@400;500;600;700;800;900">Outfit</option>
+                            <option value="Source+Sans+3:wght@400;500;600;700;800;900">Source Sans 3</option>
+                        </select>
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label class="block text-xs font-bold text-slate-500 mb-1">Parametro Google Fonts (copiar de fonts.google.com)</label>
+                        <input type="text" data-cms="meta.fontGoogleParam" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm font-mono text-xs" placeholder="Inter:wght@400;500;600;700">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 mb-1">Nombre marca</label>
+                        <input type="text" data-cms="brand.name" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 mb-1">Subtitulo / tagline</label>
+                        <input type="text" data-cms="brand.tagline" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm">
+                    </div>
+                </div>
+            </section>
+
+            <section id="sec-nav" class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 scroll-mt-24">
+                <h2 class="text-lg font-black text-vamerBlue mb-4">Menu y navegacion</h2>
+                <div class="grid sm:grid-cols-2 gap-4">
+                    <div><label class="block text-xs font-bold text-slate-500 mb-1">Lotes (escritorio)</label><input type="text" data-cms="nav.lotes" class="w-full border rounded-lg px-3 py-2 text-sm"></div>
+                    <div><label class="block text-xs font-bold text-slate-500 mb-1">Acceso admin (escritorio)</label><input type="text" data-cms="nav.adminAccess" class="w-full border rounded-lg px-3 py-2 text-sm"></div>
+                    <div><label class="block text-xs font-bold text-slate-500 mb-1">Movil: Inicio</label><input type="text" data-cms="nav.mobileInicio" class="w-full border rounded-lg px-3 py-2 text-sm"></div>
+                    <div><label class="block text-xs font-bold text-slate-500 mb-1">Movil: Lotes</label><input type="text" data-cms="nav.mobileLotes" class="w-full border rounded-lg px-3 py-2 text-sm"></div>
+                    <div><label class="block text-xs font-bold text-slate-500 mb-1">Movil: Admin</label><input type="text" data-cms="nav.mobileAdmin" class="w-full border rounded-lg px-3 py-2 text-sm"></div>
+                    <div><label class="block text-xs font-bold text-slate-500 mb-1">Movil: Ver dashboard (tras login)</label><input type="text" data-cms="nav.mobileDashboard" class="w-full border rounded-lg px-3 py-2 text-sm"></div>
+                    <div><label class="block text-xs font-bold text-slate-500 mb-1">Etiqueta panel ejecutivo</label><input type="text" data-cms="nav.adminNavLabel" class="w-full border rounded-lg px-3 py-2 text-sm"></div>
+                    <div><label class="block text-xs font-bold text-slate-500 mb-1">Cerrar sesion</label><input type="text" data-cms="nav.cerrarSesion" class="w-full border rounded-lg px-3 py-2 text-sm"></div>
+                    <div><label class="block text-xs font-bold text-slate-500 mb-1">Iniciales avatar (2 letras)</label><input type="text" data-cms="nav.adminAvatar" maxlength="4" class="w-full border rounded-lg px-3 py-2 text-sm"></div>
+                </div>
+            </section>
+
+            <section id="sec-hero-p" class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 scroll-mt-24">
+                <h2 class="text-lg font-black text-vamerBlue mb-1">Hero — Modo presentacion</h2>
+                <p class="text-xs text-slate-500 mb-4">Textos cuando el visitante elige &quot;Modo presentacion&quot; en la landing.</p>
+                <div class="grid gap-4">
+                    <div><label class="block text-xs font-bold text-slate-500 mb-1">Imagen (ruta o URL)</label><input type="text" data-cms="hero.image" class="w-full border rounded-lg px-3 py-2 text-sm font-mono text-xs"></div>
+                    <div><label class="block text-xs font-bold text-slate-500 mb-1">Texto alternativo imagen</label><input type="text" data-cms="hero.imageAlt" class="w-full border rounded-lg px-3 py-2 text-sm"></div>
+                    <div><label class="block text-xs font-bold text-slate-500 mb-1">Antetitulo (kicker)</label><input type="text" data-cms="hero.presentation.kicker" class="w-full border rounded-lg px-3 py-2 text-sm"></div>
+                    <div><label class="block text-xs font-bold text-slate-500 mb-1">Titulo principal</label><textarea data-cms="hero.presentation.title" rows="2" class="w-full border rounded-lg px-3 py-2 text-sm"></textarea></div>
+                    <div><label class="block text-xs font-bold text-slate-500 mb-1">Parrafo</label><textarea data-cms="hero.presentation.text" rows="3" class="w-full border rounded-lg px-3 py-2 text-sm"></textarea></div>
+                    <div class="grid sm:grid-cols-2 gap-4">
+                        <div><label class="block text-xs font-bold text-slate-500 mb-1">Boton principal</label><input type="text" data-cms="hero.presentation.ctaPrimary" class="w-full border rounded-lg px-3 py-2 text-sm"></div>
+                        <div><label class="block text-xs font-bold text-slate-500 mb-1">Boton secundario</label><input type="text" data-cms="hero.presentation.ctaSecondary" class="w-full border rounded-lg px-3 py-2 text-sm"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="sec-hero-l" class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 scroll-mt-24">
+                <h2 class="text-lg font-black text-vamerBlue mb-1">Hero — Modo captacion (leads)</h2>
+                <p class="text-xs text-slate-500 mb-4">Textos cuando el visitante activa &quot;Modo captacion&quot;. El boton secundario abre el WhatsApp de captacion (seccion WhatsApp).</p>
+                <div class="grid gap-4">
+                    <div><label class="block text-xs font-bold text-slate-500 mb-1">Antetitulo</label><input type="text" data-cms="hero.leads.kicker" class="w-full border rounded-lg px-3 py-2 text-sm"></div>
+                    <div><label class="block text-xs font-bold text-slate-500 mb-1">Titulo</label><textarea data-cms="hero.leads.title" rows="2" class="w-full border rounded-lg px-3 py-2 text-sm"></textarea></div>
+                    <div><label class="block text-xs font-bold text-slate-500 mb-1">Parrafo</label><textarea data-cms="hero.leads.text" rows="3" class="w-full border rounded-lg px-3 py-2 text-sm"></textarea></div>
+                    <div class="grid sm:grid-cols-2 gap-4">
+                        <div><label class="block text-xs font-bold text-slate-500 mb-1">Boton principal</label><input type="text" data-cms="hero.leads.ctaPrimary" class="w-full border rounded-lg px-3 py-2 text-sm"></div>
+                        <div><label class="block text-xs font-bold text-slate-500 mb-1">Boton WhatsApp</label><input type="text" data-cms="hero.leads.ctaSecondary" class="w-full border rounded-lg px-3 py-2 text-sm"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="sec-hero-modes" class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 scroll-mt-24">
+                <h2 class="text-lg font-black text-vamerBlue mb-1">Hero — Textos de los interruptores</h2>
+                <p class="text-xs text-slate-500 mb-4">Los dos botones sobreimpresos en la imagen principal que cambian entre presentacion y captacion.</p>
+                <div class="grid sm:grid-cols-2 gap-4">
+                    <div><label class="block text-xs font-bold text-slate-500 mb-1">Etiqueta modo presentacion</label><input type="text" data-cms="hero.modeTogglePresentation" class="w-full border rounded-lg px-3 py-2 text-sm"></div>
+                    <div><label class="block text-xs font-bold text-slate-500 mb-1">Etiqueta modo captacion</label><input type="text" data-cms="hero.modeToggleLeads" class="w-full border rounded-lg px-3 py-2 text-sm"></div>
+                </div>
+            </section>
+
+            <section id="sec-metrics" class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 scroll-mt-24">
+                <h2 class="text-lg font-black text-vamerBlue mb-4">Metricas (cuatro cajas)</h2>
+                <div class="space-y-6">
+                    <div class="border border-slate-100 rounded-xl p-4 grid sm:grid-cols-3 gap-3">
+                        <div class="sm:col-span-2"><label class="block text-xs font-bold text-slate-500 mb-1">Caja 1 — Etiqueta</label><input type="text" data-cms="metrics.0.label" class="w-full border rounded-lg px-3 py-2 text-sm"></div>
+                        <div><label class="block text-xs font-bold text-slate-500 mb-1">Valor</label><input type="text" data-cms="metrics.0.value" class="w-full border rounded-lg px-3 py-2 text-sm"></div>
+                        <div class="sm:col-span-3"><label class="block text-xs font-bold text-slate-500 mb-1">Color numero</label>
+                            <select data-cms="metrics.0.tone" class="border rounded-lg px-3 py-2 text-sm">
+                                <option value="blue">Azul</option><option value="emerald">Verde</option><option value="amber">Ambar</option><option value="rose">Rosa / rojo</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="border border-slate-100 rounded-xl p-4 grid sm:grid-cols-3 gap-3">
+                        <div class="sm:col-span-2"><label class="block text-xs font-bold text-slate-500 mb-1">Caja 2 — Etiqueta</label><input type="text" data-cms="metrics.1.label" class="w-full border rounded-lg px-3 py-2 text-sm"></div>
+                        <div><label class="block text-xs font-bold text-slate-500 mb-1">Valor</label><input type="text" data-cms="metrics.1.value" class="w-full border rounded-lg px-3 py-2 text-sm"></div>
+                        <div class="sm:col-span-3"><label class="block text-xs font-bold text-slate-500 mb-1">Color numero</label>
+                            <select data-cms="metrics.1.tone" class="border rounded-lg px-3 py-2 text-sm">
+                                <option value="blue">Azul</option><option value="emerald">Verde</option><option value="amber">Ambar</option><option value="rose">Rosa / rojo</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="border border-slate-100 rounded-xl p-4 grid sm:grid-cols-3 gap-3">
+                        <div class="sm:col-span-2"><label class="block text-xs font-bold text-slate-500 mb-1">Caja 3 — Etiqueta</label><input type="text" data-cms="metrics.2.label" class="w-full border rounded-lg px-3 py-2 text-sm"></div>
+                        <div><label class="block text-xs font-bold text-slate-500 mb-1">Valor</label><input type="text" data-cms="metrics.2.value" class="w-full border rounded-lg px-3 py-2 text-sm"></div>
+                        <div class="sm:col-span-3"><label class="block text-xs font-bold text-slate-500 mb-1">Color numero</label>
+                            <select data-cms="metrics.2.tone" class="border rounded-lg px-3 py-2 text-sm">
+                                <option value="blue">Azul</option><option value="emerald">Verde</option><option value="amber">Ambar</option><option value="rose">Rosa / rojo</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="border border-slate-100 rounded-xl p-4 grid sm:grid-cols-3 gap-3">
+                        <div class="sm:col-span-2"><label class="block text-xs font-bold text-slate-500 mb-1">Caja 4 — Etiqueta</label><input type="text" data-cms="metrics.3.label" class="w-full border rounded-lg px-3 py-2 text-sm"></div>
+                        <div><label class="block text-xs font-bold text-slate-500 mb-1">Valor</label><input type="text" data-cms="metrics.3.value" class="w-full border rounded-lg px-3 py-2 text-sm"></div>
+                        <div class="sm:col-span-3"><label class="block text-xs font-bold text-slate-500 mb-1">Color numero</label>
+                            <select data-cms="metrics.3.tone" class="border rounded-lg px-3 py-2 text-sm">
+                                <option value="blue">Azul</option><option value="emerald">Verde</option><option value="amber">Ambar</option><option value="rose">Rosa / rojo</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="sec-valor" class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 scroll-mt-24">
+                <h2 class="text-lg font-black text-vamerBlue mb-4">Propuesta de valor</h2>
+                <div class="grid gap-4">
+                    <div><label class="block text-xs font-bold text-slate-500 mb-1">Titulo</label><input type="text" data-cms="valueProp.title" class="w-full border rounded-lg px-3 py-2 text-sm"></div>
+                    <div><label class="block text-xs font-bold text-slate-500 mb-1">Parrafo</label><textarea data-cms="valueProp.text" rows="3" class="w-full border rounded-lg px-3 py-2 text-sm"></textarea></div>
+                    <div><label class="block text-xs font-bold text-slate-500 mb-1">Viñeta 1</label><input type="text" data-cms="valueProp.bullets.0" class="w-full border rounded-lg px-3 py-2 text-sm"></div>
+                    <div><label class="block text-xs font-bold text-slate-500 mb-1">Viñeta 2</label><input type="text" data-cms="valueProp.bullets.1" class="w-full border rounded-lg px-3 py-2 text-sm"></div>
+                    <div><label class="block text-xs font-bold text-slate-500 mb-1">Viñeta 3</label><input type="text" data-cms="valueProp.bullets.2" class="w-full border rounded-lg px-3 py-2 text-sm"></div>
+                    <div><label class="block text-xs font-bold text-slate-500 mb-1">Imagen (ruta o URL)</label><input type="text" data-cms="valueProp.image" class="w-full border rounded-lg px-3 py-2 text-sm font-mono text-xs"></div>
+                    <div><label class="block text-xs font-bold text-slate-500 mb-1">Texto alternativo imagen</label><input type="text" data-cms="valueProp.imageAlt" class="w-full border rounded-lg px-3 py-2 text-sm"></div>
+                </div>
+            </section>
+
+            <section id="sec-enc" class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 scroll-mt-24">
+                <h2 class="text-lg font-black text-vamerBlue mb-4">Bloque Encarnacion</h2>
+                <div class="grid gap-4">
+                    <div><label class="block text-xs font-bold text-slate-500 mb-1">Imagen de fondo (ruta o URL)</label><input type="text" data-cms="encarnacion.backgroundImage" class="w-full border rounded-lg px-3 py-2 text-sm font-mono text-xs"></div>
+                    <div><label class="block text-xs font-bold text-slate-500 mb-1">Titulo</label><input type="text" data-cms="encarnacion.title" class="w-full border rounded-lg px-3 py-2 text-sm"></div>
+                    <div><label class="block text-xs font-bold text-slate-500 mb-1">Introduccion</label><textarea data-cms="encarnacion.intro" rows="3" class="w-full border rounded-lg px-3 py-2 text-sm"></textarea></div>
+                    <p class="text-xs font-bold text-slate-600 pt-2">Tres tarjetas</p>
+                    <div class="grid md:grid-cols-2 gap-4 border-t pt-4">
+                        <div><label class="block text-xs font-bold text-slate-500 mb-1">Tarjeta 1 titulo</label><input type="text" data-cms="encarnacion.cards.0.title" class="w-full border rounded-lg px-3 py-2 text-sm"></div>
+                        <div><label class="block text-xs font-bold text-slate-500 mb-1">Tarjeta 1 texto</label><input type="text" data-cms="encarnacion.cards.0.text" class="w-full border rounded-lg px-3 py-2 text-sm"></div>
+                        <div><label class="block text-xs font-bold text-slate-500 mb-1">Tarjeta 2 titulo</label><input type="text" data-cms="encarnacion.cards.1.title" class="w-full border rounded-lg px-3 py-2 text-sm"></div>
+                        <div><label class="block text-xs font-bold text-slate-500 mb-1">Tarjeta 2 texto</label><input type="text" data-cms="encarnacion.cards.1.text" class="w-full border rounded-lg px-3 py-2 text-sm"></div>
+                        <div><label class="block text-xs font-bold text-slate-500 mb-1">Tarjeta 3 titulo</label><input type="text" data-cms="encarnacion.cards.2.title" class="w-full border rounded-lg px-3 py-2 text-sm"></div>
+                        <div><label class="block text-xs font-bold text-slate-500 mb-1">Tarjeta 3 texto</label><input type="text" data-cms="encarnacion.cards.2.text" class="w-full border rounded-lg px-3 py-2 text-sm"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="sec-legal" class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 scroll-mt-24">
+                <h2 class="text-lg font-black text-vamerBlue mb-4">Legal y cifras</h2>
+                <div class="grid gap-4">
+                    <div><label class="block text-xs font-bold text-slate-500 mb-1">Titulo bloque</label><input type="text" data-cms="legal.title" class="w-full border rounded-lg px-3 py-2 text-sm"></div>
+                    <div><label class="block text-xs font-bold text-slate-500 mb-1">Punto 1</label><textarea data-cms="legal.items.0" rows="2" class="w-full border rounded-lg px-3 py-2 text-sm"></textarea></div>
+                    <div><label class="block text-xs font-bold text-slate-500 mb-1">Punto 2</label><textarea data-cms="legal.items.1" rows="2" class="w-full border rounded-lg px-3 py-2 text-sm"></textarea></div>
+                    <div><label class="block text-xs font-bold text-slate-500 mb-1">Punto 3</label><textarea data-cms="legal.items.2" rows="2" class="w-full border rounded-lg px-3 py-2 text-sm"></textarea></div>
+                    <div class="grid sm:grid-cols-2 gap-4 border-t pt-4">
+                        <div><label class="block text-xs font-bold text-slate-500 mb-1">Stat 1 etiqueta</label><input type="text" data-cms="legal.stats.0.label" class="w-full border rounded-lg px-3 py-2 text-sm"></div>
+                        <div><label class="block text-xs font-bold text-slate-500 mb-1">Stat 1 valor</label><input type="text" data-cms="legal.stats.0.value" class="w-full border rounded-lg px-3 py-2 text-sm"></div>
+                        <div><label class="block text-xs font-bold text-slate-500 mb-1">Stat 2 etiqueta</label><input type="text" data-cms="legal.stats.1.label" class="w-full border rounded-lg px-3 py-2 text-sm"></div>
+                        <div><label class="block text-xs font-bold text-slate-500 mb-1">Stat 2 valor</label><input type="text" data-cms="legal.stats.1.value" class="w-full border rounded-lg px-3 py-2 text-sm"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="sec-testi" class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 scroll-mt-24">
+                <h2 class="text-lg font-black text-vamerBlue mb-4">Testimonios</h2>
+                <div class="mb-6">
+                    <label class="block text-xs font-bold text-slate-500 mb-1">Titulo de la seccion</label>
+                    <input type="text" data-cms="testimonials.title" class="w-full border rounded-lg px-3 py-2 text-sm">
+                </div>
+                <div class="space-y-6">
+                    <div class="border border-slate-100 rounded-xl p-4 grid gap-3">
+                        <p class="text-xs font-bold text-slate-600">Testimonio 1</p>
+                        <div><label class="block text-xs font-bold text-slate-500 mb-1">Cita</label><textarea data-cms="testimonials.items.0.quote" rows="2" class="w-full border rounded-lg px-3 py-2 text-sm"></textarea></div>
+                        <div><label class="block text-xs font-bold text-slate-500 mb-1">Autor / firma</label><input type="text" data-cms="testimonials.items.0.author" class="w-full border rounded-lg px-3 py-2 text-sm"></div>
+                    </div>
+                    <div class="border border-slate-100 rounded-xl p-4 grid gap-3">
+                        <p class="text-xs font-bold text-slate-600">Testimonio 2</p>
+                        <div><label class="block text-xs font-bold text-slate-500 mb-1">Cita</label><textarea data-cms="testimonials.items.1.quote" rows="2" class="w-full border rounded-lg px-3 py-2 text-sm"></textarea></div>
+                        <div><label class="block text-xs font-bold text-slate-500 mb-1">Autor / firma</label><input type="text" data-cms="testimonials.items.1.author" class="w-full border rounded-lg px-3 py-2 text-sm"></div>
+                    </div>
+                    <div class="border border-slate-100 rounded-xl p-4 grid gap-3">
+                        <p class="text-xs font-bold text-slate-600">Testimonio 3</p>
+                        <div><label class="block text-xs font-bold text-slate-500 mb-1">Cita</label><textarea data-cms="testimonials.items.2.quote" rows="2" class="w-full border rounded-lg px-3 py-2 text-sm"></textarea></div>
+                        <div><label class="block text-xs font-bold text-slate-500 mb-1">Autor / firma</label><input type="text" data-cms="testimonials.items.2.author" class="w-full border rounded-lg px-3 py-2 text-sm"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="sec-lotes" class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 scroll-mt-24">
+                <h2 class="text-lg font-black text-vamerBlue mb-4">Pagina Lotes — textos</h2>
+                <div class="grid sm:grid-cols-2 gap-4 text-sm">
+                    <div class="sm:col-span-2"><label class="block text-xs font-bold text-slate-500 mb-1">Titulo principal</label><input type="text" data-cms="lotesPage.title" class="w-full border rounded-lg px-3 py-2"></div>
+                    <div class="sm:col-span-2"><label class="block text-xs font-bold text-slate-500 mb-1">Subtitulo</label><input type="text" data-cms="lotesPage.subtitle" class="w-full border rounded-lg px-3 py-2"></div>
+                    <div><label class="block text-xs font-bold text-slate-500 mb-1">Etiqueta estados</label><input type="text" data-cms="lotesPage.estadoLabel" class="w-full border rounded-lg px-3 py-2"></div>
+                    <div><label class="block text-xs font-bold text-slate-500 mb-1">Texto Disponible</label><input type="text" data-cms="lotesPage.estadoDisponible" class="w-full border rounded-lg px-3 py-2"></div>
+                    <div><label class="block text-xs font-bold text-slate-500 mb-1">Texto Reservado</label><input type="text" data-cms="lotesPage.estadoReservado" class="w-full border rounded-lg px-3 py-2"></div>
+                    <div><label class="block text-xs font-bold text-slate-500 mb-1">Texto Vendido</label><input type="text" data-cms="lotesPage.estadoVendido" class="w-full border rounded-lg px-3 py-2"></div>
+                    <div class="sm:col-span-2"><label class="block text-xs font-bold text-slate-500 mb-1">Titulo seccion tabla</label><input type="text" data-cms="lotesPage.sectionTitle" class="w-full border rounded-lg px-3 py-2"></div>
+                    <div class="sm:col-span-2"><label class="block text-xs font-bold text-slate-500 mb-1">Ayuda seccion</label><textarea data-cms="lotesPage.sectionHelp" rows="2" class="w-full border rounded-lg px-3 py-2"></textarea></div>
+                    <div class="sm:col-span-2"><label class="block text-xs font-bold text-slate-500 mb-1">Titulo precios</label><input type="text" data-cms="lotesPage.priceBlockTitle" class="w-full border rounded-lg px-3 py-2"></div>
+                    <div class="sm:col-span-2"><label class="block text-xs font-bold text-slate-500 mb-1">Ayuda precios</label><textarea data-cms="lotesPage.priceBlockHelp" rows="2" class="w-full border rounded-lg px-3 py-2"></textarea></div>
+                    <div><label class="block text-xs font-bold text-slate-500 mb-1">Etiqueta desplegable manzana</label><input type="text" data-cms="lotesPage.lblManzana" class="w-full border rounded-lg px-3 py-2"></div>
+                    <div><label class="block text-xs font-bold text-slate-500 mb-1">Resumen: lotes</label><input type="text" data-cms="lotesPage.summaryLots" class="w-full border rounded-lg px-3 py-2"></div>
+                    <div><label class="block text-xs font-bold text-slate-500 mb-1">Resumen: precio min</label><input type="text" data-cms="lotesPage.summaryMin" class="w-full border rounded-lg px-3 py-2"></div>
+                    <div><label class="block text-xs font-bold text-slate-500 mb-1">Resumen: precio max</label><input type="text" data-cms="lotesPage.summaryMax" class="w-full border rounded-lg px-3 py-2"></div>
+                    <div><label class="block text-xs font-bold text-slate-500 mb-1">Resumen: cuota prom.</label><input type="text" data-cms="lotesPage.summaryAvg" class="w-full border rounded-lg px-3 py-2"></div>
+                    <p class="sm:col-span-2 text-xs font-bold text-slate-600 pt-2">Encabezados de tabla (6 columnas)</p>
+                    <div><label class="block text-xs text-slate-500 mb-1">Col 1</label><input type="text" data-cms="lotesPage.tableHeaders.0" class="w-full border rounded-lg px-3 py-2"></div>
+                    <div><label class="block text-xs text-slate-500 mb-1">Col 2</label><input type="text" data-cms="lotesPage.tableHeaders.1" class="w-full border rounded-lg px-3 py-2"></div>
+                    <div><label class="block text-xs text-slate-500 mb-1">Col 3</label><input type="text" data-cms="lotesPage.tableHeaders.2" class="w-full border rounded-lg px-3 py-2"></div>
+                    <div><label class="block text-xs text-slate-500 mb-1">Col 4</label><input type="text" data-cms="lotesPage.tableHeaders.3" class="w-full border rounded-lg px-3 py-2"></div>
+                    <div><label class="block text-xs text-slate-500 mb-1">Col 5</label><input type="text" data-cms="lotesPage.tableHeaders.4" class="w-full border rounded-lg px-3 py-2"></div>
+                    <div><label class="block text-xs text-slate-500 mb-1">Col 6</label><input type="text" data-cms="lotesPage.tableHeaders.5" class="w-full border rounded-lg px-3 py-2"></div>
+                    <div><label class="block text-xs font-bold text-slate-500 mb-1">Boton fila (Cotizar)</label><input type="text" data-cms="lotesPage.cotizar" class="w-full border rounded-lg px-3 py-2"></div>
+                    <div class="sm:col-span-2"><label class="block text-xs font-bold text-slate-500 mb-1">Titulo simulador</label><input type="text" data-cms="lotesPage.simTitle" class="w-full border rounded-lg px-3 py-2"></div>
+                    <div class="sm:col-span-2"><label class="block text-xs font-bold text-slate-500 mb-1">Ayuda simulador</label><textarea data-cms="lotesPage.simHelp" rows="2" class="w-full border rounded-lg px-3 py-2"></textarea></div>
+                    <div class="sm:col-span-2"><label class="block text-xs font-bold text-slate-500 mb-1">Mensaje sin lote seleccionado</label><input type="text" data-cms="lotesPage.cuoteroEmpty" class="w-full border rounded-lg px-3 py-2"></div>
+                    <div><label class="block text-xs text-slate-500 mb-1">Etiqueta lote seleccionado</label><input type="text" data-cms="lotesPage.lblLoteSel" class="w-full border rounded-lg px-3 py-2"></div>
+                    <div><label class="block text-xs text-slate-500 mb-1">Etiqueta precio</label><input type="text" data-cms="lotesPage.lblPrecio" class="w-full border rounded-lg px-3 py-2"></div>
+                    <div><label class="block text-xs text-slate-500 mb-1">Etiqueta plazo</label><input type="text" data-cms="lotesPage.lblPlazo" class="w-full border rounded-lg px-3 py-2"></div>
+                    <div><label class="block text-xs text-slate-500 mb-1">Etiqueta tasa</label><input type="text" data-cms="lotesPage.lblTasa" class="w-full border rounded-lg px-3 py-2"></div>
+                    <div><label class="block text-xs text-slate-500 mb-1">Etiqueta entrega</label><input type="text" data-cms="lotesPage.lblEntrega" class="w-full border rounded-lg px-3 py-2"></div>
+                    <div><label class="block text-xs text-slate-500 mb-1">Etiqueta cuota</label><input type="text" data-cms="lotesPage.lblCuota" class="w-full border rounded-lg px-3 py-2"></div>
+                    <div class="sm:col-span-2"><label class="block text-xs text-slate-500 mb-1">Nota bajo cuota</label><textarea data-cms="lotesPage.cuotaNota" rows="2" class="w-full border rounded-lg px-3 py-2"></textarea></div>
+                    <div class="sm:col-span-2"><label class="block text-xs font-bold text-slate-500 mb-1">Boton contacto comercial</label><input type="text" data-cms="lotesPage.btnContacto" class="w-full border rounded-lg px-3 py-2"></div>
+                </div>
+            </section>
+
+            <section id="sec-admin-panel" class="bg-white rounded-2xl border border-indigo-200 shadow-sm p-6 scroll-mt-24 ring-1 ring-indigo-100">
+                <h2 class="text-lg font-black text-vamerBlue mb-1">Panel ejecutivo (vista admin en vamer.html)</h2>
+                <p class="text-xs text-slate-500 mb-6">Misma pantalla que ves al usar &quot;Ingresar al panel ejecutivo&quot;. Estructura alineada con los bloques KPI, tabla de comisionistas y KPIs del rubro.</p>
+
+                <div class="space-y-8">
+                    <div class="grid sm:grid-cols-2 gap-4 border-b border-slate-100 pb-6">
+                        <div class="sm:col-span-2"><label class="block text-xs font-bold text-slate-500 mb-1">Titulo principal (h2)</label><input type="text" data-cms="adminDashboard.title" class="w-full border rounded-lg px-3 py-2 text-sm"></div>
+                        <div class="sm:col-span-2"><label class="block text-xs font-bold text-slate-500 mb-1">Subtitulo bajo el titulo</label><input type="text" data-cms="adminDashboard.subtitle" class="w-full border rounded-lg px-3 py-2 text-sm"></div>
+                        <div><label class="block text-xs font-bold text-slate-500 mb-1">Boton enlace a este centro de mando</label><input type="text" data-cms="adminDashboard.cmsLinkLabel" class="w-full border rounded-lg px-3 py-2 text-sm"></div>
+                        <div><label class="block text-xs font-bold text-slate-500 mb-1">Badge &quot;Modo demo&quot;</label><input type="text" data-cms="adminDashboard.demoBadge" class="w-full border rounded-lg px-3 py-2 text-sm"></div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-sm font-black text-vamerBlue mb-3">Fila KPI (4 tarjetas grandes)</h3>
+                        <div class="space-y-4">
+                            <div class="border border-slate-100 rounded-lg p-4 grid sm:grid-cols-3 gap-3">
+                                <div class="sm:col-span-3 text-[10px] font-bold text-slate-400 uppercase">Tarjeta 1</div>
+                                <div class="sm:col-span-3"><label class="text-xs text-slate-500">Etiqueta</label><input type="text" data-cms="adminDashboard.kpiTop.0.label" class="w-full border rounded px-2 py-1.5 text-sm mt-0.5"></div>
+                                <div><label class="text-xs text-slate-500">Valor</label><input type="text" data-cms="adminDashboard.kpiTop.0.value" class="w-full border rounded px-2 py-1.5 text-sm mt-0.5"></div>
+                                <div class="sm:col-span-2"><label class="text-xs text-slate-500">Linea ayuda / subtitulo</label><input type="text" data-cms="adminDashboard.kpiTop.0.hint" class="w-full border rounded px-2 py-1.5 text-sm mt-0.5"></div>
+                            </div>
+                            <div class="border border-slate-100 rounded-lg p-4 grid sm:grid-cols-3 gap-3">
+                                <div class="sm:col-span-3 text-[10px] font-bold text-slate-400 uppercase">Tarjeta 2</div>
+                                <div class="sm:col-span-3"><label class="text-xs text-slate-500">Etiqueta</label><input type="text" data-cms="adminDashboard.kpiTop.1.label" class="w-full border rounded px-2 py-1.5 text-sm mt-0.5"></div>
+                                <div><label class="text-xs text-slate-500">Valor</label><input type="text" data-cms="adminDashboard.kpiTop.1.value" class="w-full border rounded px-2 py-1.5 text-sm mt-0.5"></div>
+                                <div class="sm:col-span-2"><label class="text-xs text-slate-500">Linea ayuda</label><input type="text" data-cms="adminDashboard.kpiTop.1.hint" class="w-full border rounded px-2 py-1.5 text-sm mt-0.5"></div>
+                            </div>
+                            <div class="border border-slate-100 rounded-lg p-4 grid sm:grid-cols-3 gap-3">
+                                <div class="sm:col-span-3 text-[10px] font-bold text-slate-400 uppercase">Tarjeta 3</div>
+                                <div class="sm:col-span-3"><label class="text-xs text-slate-500">Etiqueta</label><input type="text" data-cms="adminDashboard.kpiTop.2.label" class="w-full border rounded px-2 py-1.5 text-sm mt-0.5"></div>
+                                <div><label class="text-xs text-slate-500">Valor</label><input type="text" data-cms="adminDashboard.kpiTop.2.value" class="w-full border rounded px-2 py-1.5 text-sm mt-0.5"></div>
+                                <div class="sm:col-span-2"><label class="text-xs text-slate-500">Linea ayuda</label><input type="text" data-cms="adminDashboard.kpiTop.2.hint" class="w-full border rounded px-2 py-1.5 text-sm mt-0.5"></div>
+                            </div>
+                            <div class="border border-slate-100 rounded-lg p-4 grid sm:grid-cols-3 gap-3">
+                                <div class="sm:col-span-3 text-[10px] font-bold text-slate-400 uppercase">Tarjeta 4</div>
+                                <div class="sm:col-span-3"><label class="text-xs text-slate-500">Etiqueta</label><input type="text" data-cms="adminDashboard.kpiTop.3.label" class="w-full border rounded px-2 py-1.5 text-sm mt-0.5"></div>
+                                <div><label class="text-xs text-slate-500">Valor</label><input type="text" data-cms="adminDashboard.kpiTop.3.value" class="w-full border rounded px-2 py-1.5 text-sm mt-0.5"></div>
+                                <div class="sm:col-span-2"><label class="text-xs text-slate-500">Linea ayuda</label><input type="text" data-cms="adminDashboard.kpiTop.3.hint" class="w-full border rounded px-2 py-1.5 text-sm mt-0.5"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-sm font-black text-vamerBlue mb-3">Grilla KPI (6 tarjetas medianas)</h3>
+                        <div class="grid gap-3 sm:grid-cols-2">
+                            <div class="border rounded-lg p-3 space-y-2 bg-slate-50/80">
+                                <span class="text-[10px] font-bold text-slate-400">1/6</span>
+                                <input type="text" data-cms="adminDashboard.kpiMid.0.label" placeholder="Etiqueta" class="w-full border rounded px-2 py-1 text-sm">
+                                <input type="text" data-cms="adminDashboard.kpiMid.0.value" placeholder="Valor" class="w-full border rounded px-2 py-1 text-sm font-semibold">
+                                <input type="text" data-cms="adminDashboard.kpiMid.0.hint" placeholder="Ayuda" class="w-full border rounded px-2 py-1 text-xs">
+                            </div>
+                            <div class="border rounded-lg p-3 space-y-2 bg-slate-50/80">
+                                <span class="text-[10px] font-bold text-slate-400">2/6</span>
+                                <input type="text" data-cms="adminDashboard.kpiMid.1.label" class="w-full border rounded px-2 py-1 text-sm">
+                                <input type="text" data-cms="adminDashboard.kpiMid.1.value" class="w-full border rounded px-2 py-1 text-sm font-semibold">
+                                <input type="text" data-cms="adminDashboard.kpiMid.1.hint" class="w-full border rounded px-2 py-1 text-xs">
+                            </div>
+                            <div class="border rounded-lg p-3 space-y-2 bg-slate-50/80">
+                                <span class="text-[10px] font-bold text-slate-400">3/6</span>
+                                <input type="text" data-cms="adminDashboard.kpiMid.2.label" class="w-full border rounded px-2 py-1 text-sm">
+                                <input type="text" data-cms="adminDashboard.kpiMid.2.value" class="w-full border rounded px-2 py-1 text-sm font-semibold">
+                                <input type="text" data-cms="adminDashboard.kpiMid.2.hint" class="w-full border rounded px-2 py-1 text-xs">
+                            </div>
+                            <div class="border rounded-lg p-3 space-y-2 bg-slate-50/80">
+                                <span class="text-[10px] font-bold text-slate-400">4/6</span>
+                                <input type="text" data-cms="adminDashboard.kpiMid.3.label" class="w-full border rounded px-2 py-1 text-sm">
+                                <input type="text" data-cms="adminDashboard.kpiMid.3.value" class="w-full border rounded px-2 py-1 text-sm font-semibold">
+                                <input type="text" data-cms="adminDashboard.kpiMid.3.hint" class="w-full border rounded px-2 py-1 text-xs">
+                            </div>
+                            <div class="border rounded-lg p-3 space-y-2 bg-slate-50/80">
+                                <span class="text-[10px] font-bold text-slate-400">5/6</span>
+                                <input type="text" data-cms="adminDashboard.kpiMid.4.label" class="w-full border rounded px-2 py-1 text-sm">
+                                <input type="text" data-cms="adminDashboard.kpiMid.4.value" class="w-full border rounded px-2 py-1 text-sm font-semibold">
+                                <input type="text" data-cms="adminDashboard.kpiMid.4.hint" class="w-full border rounded px-2 py-1 text-xs">
+                            </div>
+                            <div class="border rounded-lg p-3 space-y-2 bg-slate-50/80">
+                                <span class="text-[10px] font-bold text-slate-400">6/6</span>
+                                <input type="text" data-cms="adminDashboard.kpiMid.5.label" class="w-full border rounded px-2 py-1 text-sm">
+                                <input type="text" data-cms="adminDashboard.kpiMid.5.value" class="w-full border rounded px-2 py-1 text-sm font-semibold">
+                                <input type="text" data-cms="adminDashboard.kpiMid.5.hint" class="w-full border rounded px-2 py-1 text-xs">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-sm font-black text-vamerBlue mb-3">Tabla comisionistas (3 filas fijas)</h3>
+                        <div class="grid sm:grid-cols-2 gap-4 mb-4">
+                            <div><label class="text-xs text-slate-500">Titulo bloque</label><input type="text" data-cms="adminDashboard.commissionistas.title" class="w-full border rounded-lg px-3 py-2 text-sm mt-0.5"></div>
+                            <div><label class="text-xs text-slate-500">Texto boton reporte</label><input type="text" data-cms="adminDashboard.commissionistas.reportButton" class="w-full border rounded-lg px-3 py-2 text-sm mt-0.5"></div>
+                        </div>
+                        <p class="text-xs font-bold text-slate-600 mb-2">Cabeceras columnas</p>
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
+                            <input type="text" data-cms="adminDashboard.commissionistas.headers.0" class="col-span-1 border rounded px-2 py-1.5 text-xs" placeholder="Col 1">
+                            <input type="text" data-cms="adminDashboard.commissionistas.headers.1" class="border rounded px-2 py-1.5 text-xs">
+                            <input type="text" data-cms="adminDashboard.commissionistas.headers.2" class="border rounded px-2 py-1.5 text-xs">
+                            <input type="text" data-cms="adminDashboard.commissionistas.headers.3" class="border rounded px-2 py-1.5 text-xs">
+                        </div>
+                        <div class="space-y-3">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase">Fila 1</p>
+                            <div class="grid sm:grid-cols-4 gap-2">
+                                <input type="text" data-cms="adminDashboard.commissionistas.rows.0.name" placeholder="Nombre" class="border rounded px-2 py-1.5 text-sm">
+                                <input type="text" data-cms="adminDashboard.commissionistas.rows.0.sales" placeholder="Ventas" class="border rounded px-2 py-1.5 text-sm">
+                                <input type="text" data-cms="adminDashboard.commissionistas.rows.0.commission" placeholder="Comision" class="border rounded px-2 py-1.5 text-sm">
+                                <input type="text" data-cms="adminDashboard.commissionistas.rows.0.status" placeholder="Estado" class="border rounded px-2 py-1.5 text-sm">
+                            </div>
+                            <p class="text-[10px] font-bold text-slate-400 uppercase">Fila 2</p>
+                            <div class="grid sm:grid-cols-4 gap-2">
+                                <input type="text" data-cms="adminDashboard.commissionistas.rows.1.name" class="border rounded px-2 py-1.5 text-sm">
+                                <input type="text" data-cms="adminDashboard.commissionistas.rows.1.sales" class="border rounded px-2 py-1.5 text-sm">
+                                <input type="text" data-cms="adminDashboard.commissionistas.rows.1.commission" class="border rounded px-2 py-1.5 text-sm">
+                                <input type="text" data-cms="adminDashboard.commissionistas.rows.1.status" class="border rounded px-2 py-1.5 text-sm">
+                            </div>
+                            <p class="text-[10px] font-bold text-slate-400 uppercase">Fila 3</p>
+                            <div class="grid sm:grid-cols-4 gap-2">
+                                <input type="text" data-cms="adminDashboard.commissionistas.rows.2.name" class="border rounded px-2 py-1.5 text-sm">
+                                <input type="text" data-cms="adminDashboard.commissionistas.rows.2.sales" class="border rounded px-2 py-1.5 text-sm">
+                                <input type="text" data-cms="adminDashboard.commissionistas.rows.2.commission" class="border rounded px-2 py-1.5 text-sm">
+                                <input type="text" data-cms="adminDashboard.commissionistas.rows.2.status" class="border rounded px-2 py-1.5 text-sm">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-sm font-black text-vamerBlue mb-3">KPIs del rubro (4 cajas + nota)</h3>
+                        <div class="mb-3"><label class="text-xs text-slate-500">Titulo seccion</label><input type="text" data-cms="adminDashboard.rubro.title" class="w-full border rounded-lg px-3 py-2 text-sm mt-0.5"></div>
+                        <div class="grid sm:grid-cols-2 gap-3 mb-4">
+                            <div class="border rounded-lg p-2 space-y-1">
+                                <input type="text" data-cms="adminDashboard.rubro.boxes.0.label" placeholder="Etiqueta" class="w-full border rounded px-2 py-1 text-xs">
+                                <input type="text" data-cms="adminDashboard.rubro.boxes.0.value" placeholder="Valor" class="w-full border rounded px-2 py-1 text-sm font-semibold">
+                            </div>
+                            <div class="border rounded-lg p-2 space-y-1">
+                                <input type="text" data-cms="adminDashboard.rubro.boxes.1.label" class="w-full border rounded px-2 py-1 text-xs">
+                                <input type="text" data-cms="adminDashboard.rubro.boxes.1.value" class="w-full border rounded px-2 py-1 text-sm font-semibold">
+                            </div>
+                            <div class="border rounded-lg p-2 space-y-1">
+                                <input type="text" data-cms="adminDashboard.rubro.boxes.2.label" class="w-full border rounded px-2 py-1 text-xs">
+                                <input type="text" data-cms="adminDashboard.rubro.boxes.2.value" class="w-full border rounded px-2 py-1 text-sm font-semibold">
+                            </div>
+                            <div class="border rounded-lg p-2 space-y-1">
+                                <input type="text" data-cms="adminDashboard.rubro.boxes.3.label" class="w-full border rounded px-2 py-1 text-xs">
+                                <input type="text" data-cms="adminDashboard.rubro.boxes.3.value" class="w-full border rounded px-2 py-1 text-sm font-semibold">
+                            </div>
+                        </div>
+                        <label class="text-xs text-slate-500">Pie de nota (texto pequeño)</label>
+                        <textarea data-cms="adminDashboard.rubro.footnote" rows="2" class="w-full border rounded-lg px-3 py-2 text-sm mt-0.5"></textarea>
+                    </div>
+                </div>
+            </section>
+
+            <section id="sec-login" class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 scroll-mt-24">
+                <h2 class="text-lg font-black text-vamerBlue mb-4">Pantalla de login</h2>
+                <div class="grid sm:grid-cols-2 gap-4">
+                    <div class="sm:col-span-2"><label class="block text-xs font-bold text-slate-500 mb-1">Titulo</label><input type="text" data-cms="loginPage.title" class="w-full border rounded-lg px-3 py-2 text-sm"></div>
+                    <div class="sm:col-span-2"><label class="block text-xs font-bold text-slate-500 mb-1">Subtitulo</label><input type="text" data-cms="loginPage.subtitle" class="w-full border rounded-lg px-3 py-2 text-sm"></div>
+                    <div><label class="block text-xs font-bold text-slate-500 mb-1">Placeholder usuario</label><input type="text" data-cms="loginPage.userPlaceholder" class="w-full border rounded-lg px-3 py-2 text-sm"></div>
+                    <div><label class="block text-xs font-bold text-slate-500 mb-1">Placeholder contraseña</label><input type="text" data-cms="loginPage.passPlaceholder" class="w-full border rounded-lg px-3 py-2 text-sm"></div>
+                    <div><label class="block text-xs font-bold text-slate-500 mb-1">Texto boton ingresar</label><input type="text" data-cms="loginPage.submit" class="w-full border rounded-lg px-3 py-2 text-sm"></div>
+                    <div><label class="block text-xs font-bold text-slate-500 mb-1">Texto enlace a este panel</label><input type="text" data-cms="loginPage.linkCmsLabel" class="w-full border rounded-lg px-3 py-2 text-sm"></div>
+                    <div class="sm:col-span-2"><label class="block text-xs font-bold text-slate-500 mb-1">Ayuda bajo enlace</label><input type="text" data-cms="loginPage.linkCmsHint" class="w-full border rounded-lg px-3 py-2 text-sm"></div>
+                </div>
+            </section>
+
+            <section id="sec-wa" class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 scroll-mt-24">
+                <h2 class="text-lg font-black text-vamerBlue mb-4">WhatsApp</h2>
+                <p class="text-xs text-slate-500 mb-4">Pega el enlace completo generado desde wa.me (incluye texto prellenado si queres).</p>
+                <div class="grid gap-4">
+                    <div><label class="block text-xs font-bold text-slate-500 mb-1">Enlace boton flotante (presentacion)</label><textarea data-cms="integration.whatsappUrl" rows="2" class="w-full border rounded-lg px-3 py-2 text-sm font-mono text-xs"></textarea></div>
+                    <div><label class="block text-xs font-bold text-slate-500 mb-1">Enlace modo captacion / contacto</label><textarea data-cms="integration.whatsappLeadsUrl" rows="2" class="w-full border rounded-lg px-3 py-2 text-sm font-mono text-xs"></textarea></div>
+                </div>
+            </section>
+
+            <section id="sec-footer" class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 scroll-mt-24">
+                <h2 class="text-lg font-black text-vamerBlue mb-4">Pie de pagina</h2>
+                <p class="text-xs text-slate-500 mb-2">El sitio antepondra el simbolo de copyright automáticamente.</p>
+                <label class="block text-xs font-bold text-slate-500 mb-1">Texto del pie (sin simbolo ©)</label>
+                <textarea data-cms="footer" rows="2" class="w-full border rounded-lg px-3 py-2 text-sm"></textarea>
+            </section>
+
+            <section id="sec-advanced" class="bg-slate-50 rounded-2xl border border-slate-300 shadow-sm p-6 scroll-mt-24">
+                <h2 class="text-lg font-black text-vamerBlue mb-2">Avanzado — JSON completo</h2>
+                <p class="text-sm text-slate-600 mb-4">Solo si necesitas copiar, importar archivo o revisar la estructura cruda. Los cambios en el editor visual se sincronizan aca al guardar.</p>
+                <div class="flex flex-wrap gap-2 mb-3">
+                    <button type="button" id="btn-export-site" class="px-3 py-2 rounded-lg border border-slate-300 text-sm font-semibold bg-white hover:bg-slate-50">Descargar site-config.json</button>
+                    <label class="inline-flex items-center px-3 py-2 rounded-lg border border-slate-300 text-sm font-semibold bg-white hover:bg-slate-50 cursor-pointer">
+                        Importar archivo<input type="file" id="import-site" accept="application/json,.json" class="hidden">
+                    </label>
+                    <button type="button" id="btn-clear-site" class="px-3 py-2 rounded-lg text-sm font-semibold text-rose-700 border border-rose-200 bg-white hover:bg-rose-50">Quitar copia guardada en navegador</button>
+                </div>
+                <textarea id="ta-site" class="w-full h-64 font-mono text-xs border border-slate-300 rounded-xl p-4 bg-white" spellcheck="false"></textarea>
+            </section>
+
+            <section id="sec-prices" class="bg-amber-50/80 rounded-2xl border border-amber-200 shadow-sm p-6 scroll-mt-24">
+                <h2 class="text-lg font-black text-vamerBlue mb-2">Precios por manzana</h2>
+                <p class="text-sm text-slate-700 mb-4">La tabla de lotes tiene muchas filas; editarla en pantalla tipo WordPress implicaria un modulo aparte. Por ahora seguis pudiendo pegar o importar JSON (exportacion para respaldo).</p>
+                <div class="flex flex-wrap gap-2 mb-3">
+                    <button type="button" id="btn-save-prices" class="px-4 py-2 rounded-lg bg-vamerBlue text-white text-sm font-bold hover:bg-vamerBlueSoft">Guardar precios</button>
+                    <button type="button" id="btn-export-prices" class="px-3 py-2 rounded-lg border border-slate-300 text-sm bg-white">Exportar JSON</button>
+                    <label class="inline-flex items-center px-3 py-2 rounded-lg border border-slate-300 text-sm bg-white cursor-pointer">
+                        Importar<input type="file" id="import-prices" accept="application/json,.json" class="hidden">
+                    </label>
+                    <button type="button" id="btn-clear-prices" class="px-3 py-2 rounded-lg text-sm text-rose-700 border border-rose-200 bg-white">Quitar precios guardados</button>
+                </div>
+                <textarea id="ta-prices" class="w-full h-56 font-mono text-xs border border-slate-300 rounded-xl p-4 bg-white" spellcheck="false"></textarea>
+            </section>
+        </div>
+    </div>
+
+    <!-- Copia de respaldo = mismos datos que data/site-config.json (por si abris admin.html con file:// o fetch falla). Actualizar cuando cambies el JSON del proyecto. -->
+    <script type="application/json" id="vamer-embedded-site-config">
+{"meta":{"pageTitle":"VAMER | Loteamientos en Encarnacion","fontName":"Inter","fontGoogleParam":"Inter:wght@400;500;600;700;800;900"},"brand":{"name":"VAMER","tagline":"Desarrollos Inmobiliarios"},"nav":{"lotes":"Lotes y Disponibilidad","adminAccess":"Acceso Admin","mobileInicio":"Inicio","mobileLotes":"Lotes y Disponibilidad","mobileAdmin":"Acceso Admin","mobileDashboard":"Ver dashboard","adminNavLabel":"Panel Ejecutivo","cerrarSesion":"Cerrar sesion","adminAvatar":"VA"},"hero":{"modeTogglePresentation":"Modo presentacion","modeToggleLeads":"Modo captacion","image":"vamer-assets/hero-costanera.png","imageAlt":"Costanera y entorno urbano en Encarnacion, Paraguay","presentation":{"kicker":"Empresa familiar con vision de largo plazo","title":"VAMER acompana a familias e inversores a construir patrimonio en Encarnacion.","text":"Somos una empresa familiar inmobiliaria al servicio de la gente: combinamos cercania comercial, transparencia legal y gestion corporativa para que cada cliente compre con seguridad, confianza y proyeccion de valor.","ctaPrimary":"Ver lotes disponibles","ctaSecondary":"Ingreso administrador"},"leads":{"kicker":"Captacion comercial de alta conversion","title":"Lotes en Encarnacion con simulacion inmediata y atencion personalizada.","text":"Version orientada a captar consultas: destacamos disponibilidad, cuota estimada y contacto directo para acelerar visitas y reservas.","ctaPrimary":"Quiero cotizar mi lote","ctaSecondary":"Hablar por WhatsApp"}},"metrics":[{"label":"Lotes totales","value":"256","tone":"blue"},{"label":"Disponibles","value":"256","tone":"emerald"},{"label":"Reservados","value":"0","tone":"amber"},{"label":"Vendidos","value":"0","tone":"rose"}],"valueProp":{"title":"VAMER Encarnacion: propuesta de valor","text":"Modelo comercial orientado a conversion: ubicacion estrategica, informes claros de disponibilidad, financiacion transparente y seguimiento de rendimiento para direccion comercial.","bullets":["Estado por lote actualizado para asesores y clientes.","Simulador de cuota para acelerar decisiones de compra.","Panel de KPIs: ventas, prospeccion, comisiones y cobranza."],"image":"vamer-assets/proyecto-vamer-lotes.png","imageAlt":"Proyecto de loteamiento VAMER en Encarnacion"},"encarnacion":{"backgroundImage":"vamer-assets/hero-costanera.png","title":"Por que Encarnacion potencia tu inversion","intro":"Encarnacion combina calidad de vida, turismo y desarrollo urbano sostenido. Su costanera, playas urbanas y dinamica comercial impulsan la demanda inmobiliaria, generando oportunidades concretas para vivienda, renta y valorizacion de tierra a mediano plazo.","cards":[{"title":"Costanera activa todo el ano","text":"Conectividad, espacio publico y atractivo para nuevas urbanizaciones."},{"title":"Playas y turismo consolidado","text":"Mayor flujo de visitantes e interes creciente en propiedades."},{"title":"Expansion residencial planificada","text":"Buen escenario para compra patrimonial y crecimiento de plusvalia."}]},"legal":{"title":"Confianza legal y operativa","items":["Verificacion documental previa y trazabilidad de cada operacion.","Contratos claros, cronograma de pagos y acompanamiento comercial.","Reportes ejecutivos para direccion y control interno de ventas."],"stats":[{"label":"Satisfaccion postventa","value":"94%"},{"label":"Operaciones auditables","value":"100%"}]},"testimonials":{"title":"Lo que dicen nuestros clientes","items":[{"quote":"\u201cNos explicaron cada paso con claridad. Sentimos acompanamiento real y profesional.\u201d","author":"Familia Benitez - Compradora residencial"},{"quote":"\u201cComo inversores, valoramos su orden en datos, disponibilidad y cumplimiento comercial.\u201d","author":"Grupo Delta - Inversion inmobiliaria"},{"quote":"\u201cEmpresa familiar seria, con trato humano y enfoque corporativo en resultados.\u201d","author":"R. Martinez - Cliente referido"}]},"lotesPage":{"title":"Loteamiento Encarnacion - Disponibilidad","subtitle":"Visualizacion comercial para atencion al cliente.","estadoLabel":"Estado:","estadoDisponible":"Disponible","estadoReservado":"Reservado","estadoVendido":"Vendido","sectionTitle":"Disponibilidad y cotizacion por manzana","sectionHelp":"Interfaz unificada: selecciona manzana, revisa precios oficiales y cotiza cualquier lote desde la misma tabla.","priceBlockTitle":"Precios oficiales por manzana","priceBlockHelp":"Selecciona una manzana para ver detalle y cotizar cualquier lote en el cuotero.","lblManzana":"Manzana","summaryLots":"Lotes en manzana","summaryMin":"Precio minimo","summaryMax":"Precio maximo","summaryAvg":"Cuota promedio","tableHeaders":["Lote","Area (m2)","Precio contado","Cuota mensual","Total financiado","Accion"],"cotizar":"Cotizar","simTitle":"Simulador de financiacion","simHelp":"Calculadora orientativa con tasa mensual referencial del mercado de loteamientos en Paraguay.","cuoteroEmpty":"Selecciona un lote para activar el simulador.","lblLoteSel":"Lote seleccionado","lblPrecio":"Precio contado (Gs.)","lblPlazo":"Plazo (meses)","lblTasa":"Tasa mensual aplicada","lblEntrega":"Entrega estimada","lblCuota":"Cuota mensual estimada","cuotaNota":"Calculo con sistema de cuota fija sobre saldo financiado.","btnContacto":"Solicitar contacto comercial"},"loginPage":{"title":"Acceso administrativo","subtitle":"Demo para direccion y equipo comercial de VAMER.","userPlaceholder":"Usuario corporativo","passPlaceholder":"Contrasena","submit":"Ingresar al panel ejecutivo","linkCmsLabel":"Centro de mando del sitio (editar landing)","linkCmsHint":"Abre el editor de textos, imagenes y precios en una pestana nueva."},"integration":{"whatsappUrl":"https://wa.me/595900000000?text=Hola%20VAMER,%20me%20interesa%20conocer%20lotes%20disponibles%20en%20Encarnacion","whatsappLeadsUrl":"https://wa.me/595900000000?text=Hola%20VAMER,%20quiero%20asesoria%20para%20comprar%20un%20lote%20en%20Encarnacion"},"adminDashboard":{"title":"Panel Ejecutivo VAMER","subtitle":"Proyecto activo: Encarnacion | Corte comercial mensual","cmsLinkLabel":"Centro de mando del sitio","demoBadge":"Modo demo","kpiTop":[{"label":"Ventas cerradas","value":"22","hint":"+18% vs mes anterior"},{"label":"Facturacion mensual","value":"Gs. 1.980M","hint":"Ticket prom: Gs. 90M"},{"label":"Leads calificados","value":"146","hint":"Conversion: 15.1%"},{"label":"Morosidad","value":"3.4%","hint":"Objetivo: menor a 4.0%"}],"kpiMid":[{"label":"Tiempo promedio de cierre","value":"19 dias","hint":"Desde lead calificado a reserva."},{"label":"Absorcion de inventario","value":"8.2% mensual","hint":"Ritmo de salida de lotes disponibles."},{"label":"Precio promedio por m2","value":"Gs. 258.000","hint":"Segmento loteamientos Encarnacion."},{"label":"Retencion de reservas","value":"91.3%","hint":"Reservas que avanzan a contrato."},{"label":"Comision promedio pagada","value":"4.5%","hint":"Sobre ventas cerradas del periodo."},{"label":"Indice de recomendacion","value":"72 NPS","hint":"Satisfaccion y recompra referida."}],"commissionistas":{"title":"Control de comisionistas","reportButton":"Ver reporte","headers":["Asesor","Ventas","Comision","Estado"],"rows":[{"name":"M. Benitez","sales":"6","commission":"Gs. 42.000.000","status":"Al dia"},{"name":"L. Ayala","sales":"4","commission":"Gs. 27.000.000","status":"Pendiente cierre"},{"name":"R. Duarte","sales":"3","commission":"Gs. 19.500.000","status":"Al dia"}]},"rubro":{"title":"KPIs estrategicos del rubro","boxes":[{"label":"Velocidad de venta","value":"5.5 lotes/semana"},{"label":"Cobranza efectiva","value":"96.6%"},{"label":"CAC comercial","value":"Gs. 1.25M"},{"label":"ROI promocion","value":"3.8x"}],"footnote":"Datos de demostracion para presentacion comercial. Se pueden conectar a un backend real para reportes dinamicos y auditoria."}},"footer":"2026 VAMER Desarrollos Inmobiliarios | Borrador comercial para presentacion a cliente."}
+    </script>
+
+    <script>
+        const STORAGE_SITE = "vamer_cms_site";
+        const STORAGE_PRICES = "vamer_cms_prices";
+
+        const taSite = document.getElementById("ta-site");
+        const taPrices = document.getElementById("ta-prices");
+        const statusLine = document.getElementById("status-line");
+
+        let workingSite = null;
+
+        function keyPart(p) { return /^\d+$/.test(p) ? Number(p) : p; }
+
+        function pathParts(str) { return str.split(".").map(keyPart); }
+
+        function getDeep(obj, pathStr) {
+            let cur = obj;
+            for (const p of pathParts(pathStr)) {
+                if (cur == null) return "";
+                cur = cur[p];
+            }
+            if (cur == null || typeof cur === "object") return "";
+            return String(cur);
+        }
+
+        function setDeep(obj, pathStr, val) {
+            const parts = pathParts(pathStr);
+            let cur = obj;
+            for (let i = 0; i < parts.length - 1; i++) {
+                const k = parts[i];
+                const nk = parts[i + 1];
+                if (cur[k] == null) cur[k] = typeof nk === "number" ? [] : {};
+                cur = cur[k];
+            }
+            cur[parts[parts.length - 1]] = val;
+        }
+
+        function showStatus(msg, kind) {
+            statusLine.textContent = msg;
+            statusLine.className = "max-w-[1400px] mx-auto px-4 pt-4 text-sm font-semibold rounded-lg " + (
+                kind === "error" ? "text-rose-700" : kind === "ok" ? "text-emerald-700" : "text-slate-700"
+            );
+            statusLine.classList.remove("hidden");
+            clearTimeout(showStatus._t);
+            showStatus._t = setTimeout(function () { statusLine.classList.add("hidden"); }, 7000);
+        }
+
+        function deepClone(o) { return JSON.parse(JSON.stringify(o)); }
+
+        function mergeArrays(targetArr, sourceArr) {
+            if (!Array.isArray(sourceArr)) return deepClone(targetArr);
+            if (!Array.isArray(targetArr) || targetArr.length === 0) return deepClone(sourceArr);
+            var out = [];
+            var max = Math.max(targetArr.length, sourceArr.length);
+            for (var i = 0; i < max; i++) {
+                var s = sourceArr[i], t = targetArr[i];
+                if (s === undefined) { out[i] = deepClone(t); continue; }
+                if (t === undefined) { out[i] = deepClone(s); continue; }
+                if (s !== null && typeof s === "object" && !Array.isArray(s) && t !== null && typeof t === "object" && !Array.isArray(t)) {
+                    out[i] = deepMerge(t, s);
+                } else {
+                    out[i] = deepClone(s);
+                }
+            }
+            return out;
+        }
+
+        function deepMerge(target, source) {
+            if (source === null || source === undefined) return deepClone(target);
+            if (typeof source !== "object") return deepClone(source);
+            if (Array.isArray(source)) return mergeArrays(Array.isArray(target) ? target : [], source);
+            var base = target && typeof target === "object" && !Array.isArray(target) ? deepClone(target) : {};
+            Object.keys(source).forEach(function (k) {
+                var sv = source[k], tv = base[k];
+                if (sv !== null && typeof sv === "object" && !Array.isArray(sv)) {
+                    base[k] = deepMerge(tv || {}, sv);
+                } else if (Array.isArray(sv)) {
+                    base[k] = mergeArrays(Array.isArray(tv) ? tv : [], sv);
+                } else {
+                    base[k] = sv;
+                }
+            });
+            return base;
+        }
+
+        function getEmbeddedBaseline() {
+            var el = document.getElementById("vamer-embedded-site-config");
+            if (!el || !el.textContent.trim()) return null;
+            try { return JSON.parse(el.textContent); } catch (e) { return null; }
+        }
+
+        async function fetchDefaultSite() {
+            try {
+                var res = await fetch("data/site-config.json", { cache: "no-store" });
+                if (res.ok) return await res.json();
+            } catch (e) {}
+            return null;
+        }
+
+        async function loadWorkingSite() {
+            var baseline = await fetchDefaultSite();
+            if (!baseline) baseline = getEmbeddedBaseline();
+            if (!baseline) {
+                workingSite = { meta: {}, brand: {}, nav: {}, hero: { presentation: {}, leads: {} } };
+                return;
+            }
+            baseline = deepClone(baseline);
+            var stored = localStorage.getItem(STORAGE_SITE);
+            if (stored) {
+                try {
+                    var patch = JSON.parse(stored);
+                    workingSite = deepMerge(baseline, patch);
+                    return;
+                } catch (e) {}
+            }
+            workingSite = baseline;
+        }
+
+        function formToObject(base) {
+            const out = deepClone(base);
+            document.querySelectorAll("[data-cms]").forEach(function (el) {
+                const path = el.getAttribute("data-cms");
+                if (!path) return;
+                let v = el.value;
+                if (el.tagName === "SELECT") v = el.value;
+                setDeep(out, path, v);
+            });
+            return out;
+        }
+
+        function objectToForm(obj) {
+            document.querySelectorAll("[data-cms]").forEach(function (el) {
+                const path = el.getAttribute("data-cms");
+                if (!path) return;
+                const v = getDeep(obj, path);
+                el.value = v;
+                if (el.tagName === "SELECT") {
+                    const opt = Array.from(el.options).find(function (o) { return o.value === v; });
+                    if (!opt && el.options.length) el.selectedIndex = 0;
+                }
+            });
+        }
+
+        function syncTextareaFromWorking() {
+            taSite.value = JSON.stringify(workingSite, null, 2);
+        }
+
+        function applyFontPresetFromForm() {
+            var sel = document.getElementById("font-preset");
+            var param = sel && sel.value;
+            if (!param) return;
+            var label = param.split(":")[0].replace(/\+/g, " ");
+            var paramInput = document.querySelector('[data-cms="meta.fontGoogleParam"]');
+            var nameInput = document.querySelector('[data-cms="meta.fontName"]');
+            if (paramInput) paramInput.value = param;
+            if (nameInput && label) nameInput.value = label;
+        }
+
+        document.getElementById("font-preset").addEventListener("change", applyFontPresetFromForm);
+
+        document.getElementById("btn-save-visual").onclick = function () {
+            try {
+                workingSite = formToObject(workingSite || {});
+                localStorage.setItem(STORAGE_SITE, JSON.stringify(workingSite));
+                syncTextareaFromWorking();
+                showStatus("Listo: cambios guardados en este navegador. Abrí o actualizá vamer.html.", "ok");
+            } catch (e) {
+                showStatus("Error al guardar: " + e.message, "error");
+            }
+        };
+
+        document.getElementById("btn-reload-file").onclick = async function () {
+            localStorage.removeItem(STORAGE_SITE);
+            await loadWorkingSite();
+            objectToForm(workingSite);
+            syncTextareaFromWorking();
+            showStatus("Recargado desde data/site-config.json (se perdio la copia local del sitio).", "ok");
+        };
+
+        function downloadJson(filename, text) {
+            var blob = new Blob([text], { type: "application/json" });
+            var a = document.createElement("a");
+            a.href = URL.createObjectURL(blob);
+            a.download = filename;
+            a.click();
+            URL.revokeObjectURL(a.href);
+        }
+
+        function readFileAsText(file) {
+            return new Promise(function (resolve, reject) {
+                var r = new FileReader();
+                r.onload = function () { resolve(r.result); };
+                r.onerror = reject;
+                r.readAsText(file);
+            });
+        }
+
+        document.getElementById("btn-export-site").onclick = function () {
+            try {
+                workingSite = formToObject(workingSite || {});
+                downloadJson("site-config.json", JSON.stringify(workingSite, null, 2));
+            } catch (e) {
+                showStatus(e.message, "error");
+            }
+        };
+
+        document.getElementById("import-site").onchange = async function (ev) {
+            var f = ev.target.files && ev.target.files[0];
+            ev.target.value = "";
+            if (!f) return;
+            try {
+                var t = await readFileAsText(f);
+                workingSite = JSON.parse(t);
+                objectToForm(workingSite);
+                syncTextareaFromWorking();
+                showStatus("JSON importado al formulario. Pulsa Guardar todos los cambios para guardar en el navegador.", "ok");
+            } catch (e) {
+                showStatus("Importacion fallida: " + e.message, "error");
+            }
+        };
+
+        document.getElementById("btn-clear-site").onclick = async function () {
+            localStorage.removeItem(STORAGE_SITE);
+            await loadWorkingSite();
+            objectToForm(workingSite);
+            syncTextareaFromWorking();
+            showStatus("Copia local borrada.", "ok");
+        };
+
+        document.getElementById("btn-save-prices").onclick = function () {
+            try {
+                var obj = JSON.parse(taPrices.value);
+                if (!obj || typeof obj !== "object" || Array.isArray(obj)) throw new Error("Debe ser un objeto { A: [...], B: [...] }");
+                localStorage.setItem(STORAGE_PRICES, JSON.stringify(obj));
+                showStatus("Precios guardados.", "ok");
+            } catch (e) {
+                showStatus("JSON de precios invalido: " + e.message, "error");
+            }
+        };
+
+        document.getElementById("btn-export-prices").onclick = function () {
+            try {
+                JSON.parse(taPrices.value);
+                downloadJson("prices.json", taPrices.value);
+            } catch (e) {
+                showStatus("Revisa el JSON de precios: " + e.message, "error");
+            }
+        };
+
+        document.getElementById("import-prices").onchange = async function (ev) {
+            var f = ev.target.files && ev.target.files[0];
+            ev.target.value = "";
+            if (!f) return;
+            try {
+                var t = await readFileAsText(f);
+                taPrices.value = JSON.stringify(JSON.parse(t), null, 2);
+                showStatus("Importado al cuadro de precios. Usa Guardar precios.", "ok");
+            } catch (e) {
+                showStatus("Error: " + e.message, "error");
+            }
+        };
+
+        document.getElementById("btn-clear-prices").onclick = function () {
+            localStorage.removeItem(STORAGE_PRICES);
+            taPrices.value = JSON.stringify({ "_ayuda": "Pega aqui el objeto de manzanas exportado.", "A": [] }, null, 2);
+            showStatus("Precios locales eliminados.", "ok");
+        };
+
+        async function loadPricesTextarea() {
+            var stored = localStorage.getItem(STORAGE_PRICES);
+            if (stored) {
+                try {
+                    taPrices.value = JSON.stringify(JSON.parse(stored), null, 2);
+                    return;
+                } catch (e) {}
+            }
+            taPrices.value = JSON.stringify({
+                "_": "Guarda precios desde exportacion o edita en bloque. Claves A, B, C… hasta N.",
+                "A": []
+            }, null, 2);
+        }
+
+        (function sideNavHighlight() {
+            var links = document.querySelectorAll(".cms-nav-link");
+            var sections = [];
+            links.forEach(function (a) {
+                var id = a.getAttribute("href");
+                if (id && id.charAt(0) === "#") {
+                    var el = document.getElementById(id.slice(1));
+                    if (el) sections.push({ link: a, el: el });
+                }
+            });
+            var io = new IntersectionObserver(
+                function (entries) {
+                    entries.forEach(function (en) {
+                        if (!en.isIntersecting) return;
+                        var id = en.target.id;
+                        sections.forEach(function (s) {
+                            if (s.el.id === id) s.link.classList.add("active");
+                            else s.link.classList.remove("active");
+                        });
+                    });
+                },
+                { rootMargin: "-20% 0px -55% 0px", threshold: 0 }
+            );
+            sections.forEach(function (s) { io.observe(s.el); });
+        })();
+
+        (async function init() {
+            await loadWorkingSite();
+            objectToForm(workingSite);
+            syncTextareaFromWorking();
+            await loadPricesTextarea();
+            showStatus("Formulario listo: aparecen los textos actuales del sitio (archivo JSON o copia de respaldo). Editá y pulsá Guardar.", "ok");
+        })();
+    </script>
+</body>
+</html>

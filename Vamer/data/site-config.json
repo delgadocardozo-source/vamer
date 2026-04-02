@@ -1,0 +1,173 @@
+{
+  "meta": {
+    "pageTitle": "VAMER | Loteamientos en Encarnacion",
+    "fontName": "Inter",
+    "fontGoogleParam": "Inter:wght@400;500;600;700;800;900"
+  },
+  "brand": {
+    "name": "VAMER",
+    "tagline": "Desarrollos Inmobiliarios"
+  },
+  "nav": {
+    "lotes": "Lotes y Disponibilidad",
+    "adminAccess": "Acceso Admin",
+    "mobileInicio": "Inicio",
+    "mobileLotes": "Lotes y Disponibilidad",
+    "mobileAdmin": "Acceso Admin",
+    "mobileDashboard": "Ver dashboard",
+    "adminNavLabel": "Panel Ejecutivo",
+    "cerrarSesion": "Cerrar sesion",
+    "adminAvatar": "VA"
+  },
+  "hero": {
+    "modeTogglePresentation": "Modo presentacion",
+    "modeToggleLeads": "Modo captacion",
+    "image": "vamer-assets/hero-costanera.png",
+    "imageAlt": "Costanera y entorno urbano en Encarnacion, Paraguay",
+    "presentation": {
+      "kicker": "Empresa familiar con vision de largo plazo",
+      "title": "VAMER acompana a familias e inversores a construir patrimonio en Encarnacion.",
+      "text": "Somos una empresa familiar inmobiliaria al servicio de la gente: combinamos cercania comercial, transparencia legal y gestion corporativa para que cada cliente compre con seguridad, confianza y proyeccion de valor.",
+      "ctaPrimary": "Ver lotes disponibles",
+      "ctaSecondary": "Ingreso administrador"
+    },
+    "leads": {
+      "kicker": "Captacion comercial de alta conversion",
+      "title": "Lotes en Encarnacion con simulacion inmediata y atencion personalizada.",
+      "text": "Version orientada a captar consultas: destacamos disponibilidad, cuota estimada y contacto directo para acelerar visitas y reservas.",
+      "ctaPrimary": "Quiero cotizar mi lote",
+      "ctaSecondary": "Hablar por WhatsApp"
+    }
+  },
+  "metrics": [
+    { "label": "Lotes totales", "value": "256", "tone": "blue" },
+    { "label": "Disponibles", "value": "256", "tone": "emerald" },
+    { "label": "Reservados", "value": "0", "tone": "amber" },
+    { "label": "Vendidos", "value": "0", "tone": "rose" }
+  ],
+  "valueProp": {
+    "title": "VAMER Encarnacion: propuesta de valor",
+    "text": "Modelo comercial orientado a conversion: ubicacion estrategica, informes claros de disponibilidad, financiacion transparente y seguimiento de rendimiento para direccion comercial.",
+    "bullets": [
+      "Estado por lote actualizado para asesores y clientes.",
+      "Simulador de cuota para acelerar decisiones de compra.",
+      "Panel de KPIs: ventas, prospeccion, comisiones y cobranza."
+    ],
+    "image": "vamer-assets/proyecto-vamer-lotes.png",
+    "imageAlt": "Proyecto de loteamiento VAMER en Encarnacion"
+  },
+  "encarnacion": {
+    "backgroundImage": "vamer-assets/hero-costanera.png",
+    "title": "Por que Encarnacion potencia tu inversion",
+    "intro": "Encarnacion combina calidad de vida, turismo y desarrollo urbano sostenido. Su costanera, playas urbanas y dinamica comercial impulsan la demanda inmobiliaria, generando oportunidades concretas para vivienda, renta y valorizacion de tierra a mediano plazo.",
+    "cards": [
+      { "title": "Costanera activa todo el ano", "text": "Conectividad, espacio publico y atractivo para nuevas urbanizaciones." },
+      { "title": "Playas y turismo consolidado", "text": "Mayor flujo de visitantes e interes creciente en propiedades." },
+      { "title": "Expansion residencial planificada", "text": "Buen escenario para compra patrimonial y crecimiento de plusvalia." }
+    ]
+  },
+  "legal": {
+    "title": "Confianza legal y operativa",
+    "items": [
+      "Verificacion documental previa y trazabilidad de cada operacion.",
+      "Contratos claros, cronograma de pagos y acompanamiento comercial.",
+      "Reportes ejecutivos para direccion y control interno de ventas."
+    ],
+    "stats": [
+      { "label": "Satisfaccion postventa", "value": "94%" },
+      { "label": "Operaciones auditables", "value": "100%" }
+    ]
+  },
+  "testimonials": {
+    "title": "Lo que dicen nuestros clientes",
+    "items": [
+      { "quote": "\u201cNos explicaron cada paso con claridad. Sentimos acompanamiento real y profesional.\u201d", "author": "Familia Benitez - Compradora residencial" },
+      { "quote": "\u201cComo inversores, valoramos su orden en datos, disponibilidad y cumplimiento comercial.\u201d", "author": "Grupo Delta - Inversion inmobiliaria" },
+      { "quote": "\u201cEmpresa familiar seria, con trato humano y enfoque corporativo en resultados.\u201d", "author": "R. Martinez - Cliente referido" }
+    ]
+  },
+  "lotesPage": {
+    "title": "Loteamiento Encarnacion - Disponibilidad",
+    "subtitle": "Visualizacion comercial para atencion al cliente.",
+    "estadoLabel": "Estado:",
+    "estadoDisponible": "Disponible",
+    "estadoReservado": "Reservado",
+    "estadoVendido": "Vendido",
+    "sectionTitle": "Disponibilidad y cotizacion por manzana",
+    "sectionHelp": "Interfaz unificada: selecciona manzana, revisa precios oficiales y cotiza cualquier lote desde la misma tabla.",
+    "priceBlockTitle": "Precios oficiales por manzana",
+    "priceBlockHelp": "Selecciona una manzana para ver detalle y cotizar cualquier lote en el cuotero.",
+    "lblManzana": "Manzana",
+    "summaryLots": "Lotes en manzana",
+    "summaryMin": "Precio minimo",
+    "summaryMax": "Precio maximo",
+    "summaryAvg": "Cuota promedio",
+    "tableHeaders": ["Lote", "Area (m2)", "Precio contado", "Cuota mensual", "Total financiado", "Accion"],
+    "cotizar": "Cotizar",
+    "simTitle": "Simulador de financiacion",
+    "simHelp": "Calculadora orientativa con tasa mensual referencial del mercado de loteamientos en Paraguay.",
+    "cuoteroEmpty": "Selecciona un lote para activar el simulador.",
+    "lblLoteSel": "Lote seleccionado",
+    "lblPrecio": "Precio contado (Gs.)",
+    "lblPlazo": "Plazo (meses)",
+    "lblTasa": "Tasa mensual aplicada",
+    "lblEntrega": "Entrega estimada",
+    "lblCuota": "Cuota mensual estimada",
+    "cuotaNota": "Calculo con sistema de cuota fija sobre saldo financiado.",
+    "btnContacto": "Solicitar contacto comercial"
+  },
+  "loginPage": {
+    "title": "Acceso administrativo",
+    "subtitle": "Demo para direccion y equipo comercial de VAMER.",
+    "userPlaceholder": "Usuario corporativo",
+    "passPlaceholder": "Contrasena",
+    "submit": "Ingresar al panel ejecutivo",
+    "linkCmsLabel": "Centro de mando del sitio (editar landing)",
+    "linkCmsHint": "Abre el editor de textos, imagenes y precios en una pestana nueva."
+  },
+  "integration": {
+    "whatsappUrl": "https://wa.me/595900000000?text=Hola%20VAMER,%20me%20interesa%20conocer%20lotes%20disponibles%20en%20Encarnacion",
+    "whatsappLeadsUrl": "https://wa.me/595900000000?text=Hola%20VAMER,%20quiero%20asesoria%20para%20comprar%20un%20lote%20en%20Encarnacion"
+  },
+  "adminDashboard": {
+    "title": "Panel Ejecutivo VAMER",
+    "subtitle": "Proyecto activo: Encarnacion | Corte comercial mensual",
+    "cmsLinkLabel": "Centro de mando del sitio",
+    "demoBadge": "Modo demo",
+    "kpiTop": [
+      { "label": "Ventas cerradas", "value": "22", "hint": "+18% vs mes anterior" },
+      { "label": "Facturacion mensual", "value": "Gs. 1.980M", "hint": "Ticket prom: Gs. 90M" },
+      { "label": "Leads calificados", "value": "146", "hint": "Conversion: 15.1%" },
+      { "label": "Morosidad", "value": "3.4%", "hint": "Objetivo: menor a 4.0%" }
+    ],
+    "kpiMid": [
+      { "label": "Tiempo promedio de cierre", "value": "19 dias", "hint": "Desde lead calificado a reserva." },
+      { "label": "Absorcion de inventario", "value": "8.2% mensual", "hint": "Ritmo de salida de lotes disponibles." },
+      { "label": "Precio promedio por m2", "value": "Gs. 258.000", "hint": "Segmento loteamientos Encarnacion." },
+      { "label": "Retencion de reservas", "value": "91.3%", "hint": "Reservas que avanzan a contrato." },
+      { "label": "Comision promedio pagada", "value": "4.5%", "hint": "Sobre ventas cerradas del periodo." },
+      { "label": "Indice de recomendacion", "value": "72 NPS", "hint": "Satisfaccion y recompra referida." }
+    ],
+    "commissionistas": {
+      "title": "Control de comisionistas",
+      "reportButton": "Ver reporte",
+      "headers": ["Asesor", "Ventas", "Comision", "Estado"],
+      "rows": [
+        { "name": "M. Benitez", "sales": "6", "commission": "Gs. 42.000.000", "status": "Al dia" },
+        { "name": "L. Ayala", "sales": "4", "commission": "Gs. 27.000.000", "status": "Pendiente cierre" },
+        { "name": "R. Duarte", "sales": "3", "commission": "Gs. 19.500.000", "status": "Al dia" }
+      ]
+    },
+    "rubro": {
+      "title": "KPIs estrategicos del rubro",
+      "boxes": [
+        { "label": "Velocidad de venta", "value": "5.5 lotes/semana" },
+        { "label": "Cobranza efectiva", "value": "96.6%" },
+        { "label": "CAC comercial", "value": "Gs. 1.25M" },
+        { "label": "ROI promocion", "value": "3.8x" }
+      ],
+      "footnote": "Datos de demostracion para presentacion comercial. Se pueden conectar a un backend real para reportes dinamicos y auditoria."
+    }
+  },
+  "footer": "2026 VAMER Desarrollos Inmobiliarios | Borrador comercial para presentacion a cliente."
+}
