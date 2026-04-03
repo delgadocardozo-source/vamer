@@ -67,11 +67,8 @@
                 </div>
             </div>
 
-            <nav id="public-nav" class="hidden md:flex items-center gap-7">
+            <nav id="public-nav" class="hidden md:flex items-center gap-6">
                 <button onclick="showView('lotes')" class="text-sm font-semibold hover:text-vamerBlue transition"><span id="cms-nav-lotes">Lotes y Disponibilidad</span></button>
-                <button onclick="showView('login')" class="bg-vamerBlue text-white px-5 py-2.5 rounded-full text-sm font-bold hover:bg-vamerBlueSoft transition">
-                    <span id="cms-nav-admin">Acceso Admin</span>
-                </button>
             </nav>
 
             <nav id="admin-nav" class="hidden md:flex items-center gap-5">
@@ -90,7 +87,9 @@
             <div id="mobile-public-nav" class="space-y-3">
                 <button onclick="showView('landing')" class="w-full text-left text-sm font-semibold py-2"><span id="cms-mobile-inicio">Inicio</span></button>
                 <button onclick="showView('lotes')" class="w-full text-left text-sm font-semibold py-2"><span id="cms-mobile-lotes">Lotes y Disponibilidad</span></button>
-                <button onclick="showView('login')" class="w-full bg-vamerBlue text-white px-4 py-2.5 rounded-lg text-sm font-bold"><span id="cms-mobile-admin">Acceso Admin</span></button>
+                <p class="pt-2 border-t border-slate-100">
+                    <button type="button" onclick="showView('login'); toggleMobileMenu();" class="text-xs text-slate-400 hover:text-slate-600 font-medium"><span id="cms-discrete-access-mobile">Acceso interno</span></button>
+                </p>
             </div>
             <div id="mobile-admin-nav" class="hidden space-y-3">
                 <p class="text-xs text-slate-400 font-semibold"><span id="cms-mobile-admin-label">Panel Ejecutivo</span></p>
@@ -551,8 +550,11 @@
         </section>
     </main>
 
-    <footer class="mt-12 md:mt-16 border-t border-slate-200 bg-white py-6 text-center text-xs text-slate-500 px-4">
+    <footer class="mt-12 md:mt-16 border-t border-slate-200 bg-white py-6 text-center text-xs text-slate-500 px-4 space-y-2">
         <p id="cms-footer">&copy; 2026 VAMER Desarrollos Inmobiliarios | Borrador comercial para presentacion a cliente.</p>
+        <p class="text-[11px] text-slate-400">
+            <button type="button" onclick="showView('login')" class="hover:text-slate-600 underline-offset-2 hover:underline font-normal"><span id="cms-discrete-access-desktop">Acceso interno</span></button>
+        </p>
     </footer>
 
     <div id="whatsapp-global" class="fixed bottom-6 right-6 z-50 hover:scale-105 transition">
@@ -638,8 +640,10 @@
                 text.textContent = pres ? pres.text : "Somos una empresa familiar inmobiliaria al servicio de la gente: combinamos cercania comercial, transparencia legal y gestion corporativa para que cada cliente compre con seguridad, confianza y proyeccion de valor.";
                 mainCta.textContent = pres ? pres.ctaPrimary : "Ver lotes disponibles";
                 mainCta.onclick = function () { showView("lotes"); };
-                secondaryCta.textContent = pres ? pres.ctaSecondary : "Ingreso administrador";
-                secondaryCta.onclick = function () { showView("login"); };
+                secondaryCta.classList.add("hidden");
+            }
+            if (secondaryCta && mode === "leads") {
+                secondaryCta.classList.remove("hidden");
             }
         }
 

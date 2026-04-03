@@ -10,10 +10,11 @@
   },
   "nav": {
     "lotes": "Lotes y Disponibilidad",
-    "adminAccess": "Acceso Admin",
+    "adminAccess": "Acceso interno",
+    "discreteAccess": "Acceso interno",
     "mobileInicio": "Inicio",
     "mobileLotes": "Lotes y Disponibilidad",
-    "mobileAdmin": "Acceso Admin",
+    "mobileAdmin": "Acceso interno",
     "mobileDashboard": "Ver dashboard",
     "adminNavLabel": "Panel Ejecutivo",
     "cerrarSesion": "Cerrar sesion",

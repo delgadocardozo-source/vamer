@@ -61,10 +61,15 @@
         }
         if (cfg.nav) {
             setText("cms-nav-lotes", cfg.nav.lotes);
-            setText("cms-nav-admin", cfg.nav.adminAccess);
+            const discrete =
+                cfg.nav.discreteAccess ||
+                cfg.nav.mobileAdmin ||
+                cfg.nav.adminAccess ||
+                "Acceso interno";
+            setText("cms-discrete-access-desktop", discrete);
+            setText("cms-discrete-access-mobile", discrete);
             setText("cms-mobile-inicio", cfg.nav.mobileInicio);
             setText("cms-mobile-lotes", cfg.nav.mobileLotes);
-            setText("cms-mobile-admin", cfg.nav.mobileAdmin);
             setText("cms-mobile-dashboard", cfg.nav.mobileDashboard);
             setText("cms-admin-nav-label", cfg.nav.adminNavLabel);
             setText("cms-mobile-admin-label", cfg.nav.adminNavLabel);
