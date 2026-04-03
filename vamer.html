@@ -62,6 +62,12 @@
             max-width: 100%;
             overflow-x: hidden;
         }
+        .lotes-table-scroller {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior-x: contain;
+            touch-action: pan-x pan-y;
+        }
     </style>
 </head>
 <body class="bg-vamerBg text-vamerGrey font-sans min-h-screen w-full">
@@ -110,7 +116,7 @@
         </div>
     </header>
 
-    <main class="w-full max-w-7xl mx-auto min-w-0 px-4 sm:px-6 py-8 md:py-12 overflow-x-hidden box-border">
+    <main class="w-full max-w-7xl mx-auto min-w-0 px-4 sm:px-6 py-8 md:py-12 box-border">
         <section id="view-landing" class="view space-y-16">
             <div class="relative overflow-hidden rounded-3xl shadow-xl min-h-[380px] md:min-h-[420px]">
                 <img id="cms-hero-img" src="vamer-assets/hero-costanera.png" alt="Costanera y entorno urbano en Encarnacion, Paraguay" class="absolute inset-0 w-full h-full object-cover object-[center_35%]" width="1920" height="1080" loading="eager" decoding="async">
@@ -260,11 +266,11 @@
             </div>
 
             <div class="grid lg:grid-cols-3 gap-6 lg:gap-8 min-w-0 max-w-full">
-                <div class="lg:col-span-2 bg-white rounded-2xl p-4 sm:p-7 border border-slate-200 shadow-sm min-w-0 max-w-full overflow-hidden">
+                <div class="lg:col-span-2 bg-white rounded-2xl p-4 sm:p-7 border border-slate-200 shadow-sm min-w-0 max-w-full">
                     <h3 id="cms-lotes-sec-t" class="font-bold text-vamerBlue">Disponibilidad y cotizacion por manzana</h3>
                     <p id="cms-lotes-sec-h" class="text-xs text-slate-500 mb-6">Interfaz unificada: selecciona manzana, revisa precios oficiales y cotiza cualquier lote desde la misma tabla.</p>
 
-                    <div class="border border-slate-200 rounded-xl min-w-0 max-w-full overflow-hidden">
+                    <div class="border border-slate-200 rounded-xl min-w-0 max-w-full">
                         <div class="p-4 border-b bg-slate-50 space-y-4">
                             <div class="flex flex-col sm:flex-row sm:items-end gap-3 sm:gap-4">
                                 <div class="flex-1">
@@ -330,7 +336,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="overflow-x-auto max-w-full min-w-0 touch-pan-x">
+                        <div class="lotes-table-scroller max-w-full min-w-0">
                             <table class="w-full text-sm min-w-[640px]">
                                 <thead class="bg-slate-50 text-slate-600">
                                     <tr>
