@@ -52,16 +52,21 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
         }
         html {
+            width: 100%;
+            max-width: 100%;
+            overflow-x: hidden;
             -webkit-text-size-adjust: 100%;
         }
         body {
+            width: 100%;
+            max-width: 100%;
             overflow-x: hidden;
         }
     </style>
 </head>
 <body class="bg-vamerBg text-vamerGrey font-sans min-h-screen w-full">
-    <header class="w-full bg-white sticky top-0 z-50 border-b border-slate-200 shadow-sm">
-        <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center gap-2 sm:gap-4 min-w-0 box-border">
+    <header class="w-full max-w-full bg-white sticky top-0 z-50 border-b border-slate-200 shadow-sm">
+        <div class="w-full max-w-full flex justify-between items-center gap-2 sm:gap-4 min-w-0 box-border px-4 sm:px-6 py-3 sm:py-4 lg:max-w-7xl lg:mx-auto">
             <div class="flex items-center gap-2 sm:gap-3 cursor-pointer min-w-0 flex-1 md:flex-initial" onclick="showView('landing')">
                 <svg width="34" height="34" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M50 95L10 25H35L50 65L65 25H90L50 95Z" fill="#0f2f68"></path>
@@ -89,7 +94,7 @@
                 </svg>
             </button>
         </div>
-            <div id="mobile-menu" class="hidden md:hidden w-full max-w-7xl mx-auto border-t border-slate-200 bg-white px-4 sm:px-6 py-4 box-border">
+            <div id="mobile-menu" class="hidden md:hidden w-full max-w-full border-t border-slate-200 bg-white px-4 sm:px-6 py-4 box-border">
             <div id="mobile-public-nav" class="space-y-3">
                 <button onclick="showView('landing')" class="w-full text-left text-sm font-semibold py-2"><span id="cms-mobile-inicio">Inicio</span></button>
                 <button onclick="showView('lotes')" class="w-full text-left text-sm font-semibold py-2"><span id="cms-mobile-lotes">Lotes y Disponibilidad</span></button>
@@ -105,7 +110,7 @@
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8 md:py-12">
+    <main class="w-full max-w-7xl mx-auto min-w-0 px-4 sm:px-6 py-8 md:py-12 overflow-x-hidden box-border">
         <section id="view-landing" class="view space-y-16">
             <div class="relative overflow-hidden rounded-3xl shadow-xl min-h-[380px] md:min-h-[420px]">
                 <img id="cms-hero-img" src="vamer-assets/hero-costanera.png" alt="Costanera y entorno urbano en Encarnacion, Paraguay" class="absolute inset-0 w-full h-full object-cover object-[center_35%]" width="1920" height="1080" loading="eager" decoding="async">
@@ -240,13 +245,13 @@
             </div>
         </section>
 
-        <section id="view-lotes" class="view hidden space-y-8">
-            <div class="flex flex-wrap gap-4 justify-between items-center border-b border-slate-200 pb-5">
-                <div>
-                    <h2 id="cms-lotes-h" class="text-3xl font-black text-vamerBlue tracking-tight">Loteamiento Encarnacion - Disponibilidad</h2>
+        <section id="view-lotes" class="view hidden space-y-8 min-w-0 max-w-full">
+            <div class="flex flex-wrap gap-4 justify-between items-center border-b border-slate-200 pb-5 min-w-0 max-w-full">
+                <div class="min-w-0 max-w-full">
+                    <h2 id="cms-lotes-h" class="text-2xl sm:text-3xl font-black text-vamerBlue tracking-tight break-words">Loteamiento Encarnacion - Disponibilidad</h2>
                     <p id="cms-lotes-sub" class="text-sm text-slate-500 mt-1">Visualizacion comercial para atencion al cliente.</p>
                 </div>
-                <div class="flex items-center gap-2 bg-white border rounded-full px-3 py-2 text-xs">
+                <div class="flex flex-wrap items-center gap-2 bg-white border rounded-full px-3 py-2 text-xs max-w-full min-w-0">
                     <span id="cms-lotes-est-label" class="font-bold text-slate-400">Estado:</span>
                     <span id="cms-est-disp" class="px-2 py-1 rounded-full bg-emerald-50 text-emerald-700 font-semibold">Disponible</span>
                     <span id="cms-est-res" class="px-2 py-1 rounded-full bg-amber-50 text-amber-700 font-semibold">Reservado</span>
@@ -254,12 +259,12 @@
                 </div>
             </div>
 
-            <div class="grid lg:grid-cols-3 gap-6 lg:gap-8">
-                <div class="lg:col-span-2 bg-white rounded-2xl p-7 border border-slate-200 shadow-sm">
+            <div class="grid lg:grid-cols-3 gap-6 lg:gap-8 min-w-0 max-w-full">
+                <div class="lg:col-span-2 bg-white rounded-2xl p-4 sm:p-7 border border-slate-200 shadow-sm min-w-0 max-w-full overflow-hidden">
                     <h3 id="cms-lotes-sec-t" class="font-bold text-vamerBlue">Disponibilidad y cotizacion por manzana</h3>
                     <p id="cms-lotes-sec-h" class="text-xs text-slate-500 mb-6">Interfaz unificada: selecciona manzana, revisa precios oficiales y cotiza cualquier lote desde la misma tabla.</p>
 
-                    <div class="border border-slate-200 rounded-xl">
+                    <div class="border border-slate-200 rounded-xl min-w-0 max-w-full overflow-hidden">
                         <div class="p-4 border-b bg-slate-50 space-y-4">
                             <div class="flex flex-col sm:flex-row sm:items-end gap-3 sm:gap-4">
                                 <div class="flex-1">
@@ -309,9 +314,9 @@
                                     <p class="text-sm font-bold text-vamerBlue">Plano referencial de la manzana</p>
                                     <p class="text-[11px] text-slate-500 leading-snug mt-1">Distribucion <strong>ilustrativa</strong> segun m² de cada lote (mismos datos que la tabla). No representa linderos reales ni mensura; sirve para demo comercial hasta contar con plano definitivo.</p>
                                 </div>
-                                <div class="flex flex-wrap gap-2 items-center">
+                                <div class="flex flex-wrap gap-2 items-center min-w-0 max-w-full">
                                     <label for="lote-map-search" class="text-xs font-bold text-slate-500 sr-only">Buscar lote</label>
-                                    <input id="lote-map-search" type="text" placeholder="Ej: E-15 o solo 15" autocomplete="off" class="flex-1 min-w-[140px] border border-slate-300 rounded-lg px-3 py-2 text-sm" onkeydown="if(event.key==='Enter'){event.preventDefault();window.__vamerLoteMapSearch();}" />
+                                    <input id="lote-map-search" type="text" placeholder="Ej: E-15 o solo 15" autocomplete="off" class="flex-1 min-w-0 basis-[8rem] border border-slate-300 rounded-lg px-3 py-2 text-sm" onkeydown="if(event.key==='Enter'){event.preventDefault();window.__vamerLoteMapSearch();}" />
                                     <button type="button" onclick="window.__vamerLoteMapSearch()" class="px-4 py-2 rounded-lg bg-vamerGold text-white text-xs font-bold hover:opacity-90">Buscar en mapa</button>
                                     <p id="lote-map-total-m2" class="text-xs text-slate-500 w-full sm:w-auto sm:ml-auto"></p>
                                 </div>
@@ -325,8 +330,8 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-sm">
+                        <div class="overflow-x-auto max-w-full min-w-0 touch-pan-x">
+                            <table class="w-full text-sm min-w-[640px]">
                                 <thead class="bg-slate-50 text-slate-600">
                                     <tr>
                                         <th id="cms-th-0" class="text-left p-3 font-bold">Lote</th>
@@ -343,7 +348,7 @@
                     </div>
                 </div>
 
-                <div class="bg-vamerBlue text-white rounded-2xl p-6 sm:p-7 shadow-lg h-fit sticky top-24">
+                <div class="bg-vamerBlue text-white rounded-2xl p-6 sm:p-7 shadow-lg h-fit sticky top-24 min-w-0 max-w-full">
                     <h3 id="cms-sim-title" class="text-xl font-black">Simulador de financiacion</h3>
                     <p id="cms-sim-help" class="text-xs text-slate-200 mt-1 mb-5">Calculadora orientativa con tasa mensual referencial del mercado de loteamientos en Paraguay.</p>
 
