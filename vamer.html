@@ -51,39 +51,45 @@
             border: 2px solid #ffffff;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
         }
+        html {
+            -webkit-text-size-adjust: 100%;
+        }
+        body {
+            overflow-x: hidden;
+        }
     </style>
 </head>
-<body class="bg-vamerBg text-vamerGrey font-sans min-h-screen">
-    <header class="bg-white sticky top-0 z-50 border-b border-slate-200 shadow-sm">
-        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-            <div class="flex items-center gap-3 cursor-pointer" onclick="showView('landing')">
+<body class="bg-vamerBg text-vamerGrey font-sans min-h-screen w-full">
+    <header class="w-full bg-white sticky top-0 z-50 border-b border-slate-200 shadow-sm">
+        <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center gap-2 sm:gap-4 min-w-0 box-border">
+            <div class="flex items-center gap-2 sm:gap-3 cursor-pointer min-w-0 flex-1 md:flex-initial" onclick="showView('landing')">
                 <svg width="34" height="34" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M50 95L10 25H35L50 65L65 25H90L50 95Z" fill="#0f2f68"></path>
                     <path d="M50 95L38 25H50L60 65L50 95Z" fill="#b8932f" fill-opacity="0.75"></path>
                 </svg>
-                <div class="leading-tight">
-                    <h1 id="cms-brand-name" class="text-2xl font-black tracking-tight text-vamerBlue">VAMER</h1>
-                    <p id="cms-brand-tagline" class="text-[10px] uppercase tracking-[0.18em] text-vamerGold font-bold">Desarrollos Inmobiliarios</p>
+                <div class="leading-tight min-w-0">
+                    <h1 id="cms-brand-name" class="text-xl sm:text-2xl font-black tracking-tight text-vamerBlue truncate">VAMER</h1>
+                    <p id="cms-brand-tagline" class="text-[9px] sm:text-[10px] uppercase tracking-[0.15em] sm:tracking-[0.18em] text-vamerGold font-bold truncate">Desarrollos Inmobiliarios</p>
                 </div>
             </div>
 
-            <nav id="public-nav" class="hidden md:flex items-center gap-6">
+            <nav id="public-nav" class="hidden md:flex items-center gap-6 shrink-0">
                 <button onclick="showView('lotes')" class="text-sm font-semibold hover:text-vamerBlue transition"><span id="cms-nav-lotes">Lotes y Disponibilidad</span></button>
             </nav>
 
-            <nav id="admin-nav" class="hidden md:flex items-center gap-5">
+            <nav id="admin-nav" class="hidden md:flex items-center gap-5 shrink-0">
                 <span id="cms-admin-nav-label" class="text-xs text-slate-400">Panel Ejecutivo</span>
                 <button onclick="showView('landing')" class="text-xs font-semibold hover:text-vamerBlue"><span id="cms-cerrar-ses-nav">Cerrar sesion</span></button>
                 <div id="cms-avatar-txt" class="h-9 w-9 rounded-full bg-vamerBlue text-white text-sm font-bold flex items-center justify-center">VA</div>
             </nav>
 
-            <button id="mobile-menu-btn" onclick="toggleMobileMenu()" class="md:hidden bg-slate-100 border border-slate-200 rounded-lg p-2 text-vamerBlue" aria-label="Abrir menu">
+            <button id="mobile-menu-btn" type="button" onclick="toggleMobileMenu()" class="md:hidden shrink-0 bg-slate-100 border border-slate-200 rounded-lg p-2 text-vamerBlue" aria-label="Abrir menu">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                 </svg>
             </button>
         </div>
-            <div id="mobile-menu" class="hidden md:hidden border-t border-slate-200 bg-white px-6 py-4">
+            <div id="mobile-menu" class="hidden md:hidden w-full max-w-7xl mx-auto border-t border-slate-200 bg-white px-4 sm:px-6 py-4 box-border">
             <div id="mobile-public-nav" class="space-y-3">
                 <button onclick="showView('landing')" class="w-full text-left text-sm font-semibold py-2"><span id="cms-mobile-inicio">Inicio</span></button>
                 <button onclick="showView('lotes')" class="w-full text-left text-sm font-semibold py-2"><span id="cms-mobile-lotes">Lotes y Disponibilidad</span></button>
