@@ -299,6 +299,26 @@
                                     <p id="summary-avg" class="text-xl font-black text-vamerBlue">Gs. 0</p>
                                 </div>
                             </div>
+                            <div id="lote-map-panel" class="pt-4 mt-4 border-t border-slate-200 space-y-3">
+                                <div>
+                                    <p class="text-sm font-bold text-vamerBlue">Plano referencial de la manzana</p>
+                                    <p class="text-[11px] text-slate-500 leading-snug mt-1">Distribucion <strong>ilustrativa</strong> segun m² de cada lote (mismos datos que la tabla). No representa linderos reales ni mensura; sirve para demo comercial hasta contar con plano definitivo.</p>
+                                </div>
+                                <div class="flex flex-wrap gap-2 items-center">
+                                    <label for="lote-map-search" class="text-xs font-bold text-slate-500 sr-only">Buscar lote</label>
+                                    <input id="lote-map-search" type="text" placeholder="Ej: E-15 o solo 15" autocomplete="off" class="flex-1 min-w-[140px] border border-slate-300 rounded-lg px-3 py-2 text-sm" onkeydown="if(event.key==='Enter'){event.preventDefault();window.__vamerLoteMapSearch();}" />
+                                    <button type="button" onclick="window.__vamerLoteMapSearch()" class="px-4 py-2 rounded-lg bg-vamerGold text-white text-xs font-bold hover:opacity-90">Buscar en mapa</button>
+                                    <p id="lote-map-total-m2" class="text-xs text-slate-500 w-full sm:w-auto sm:ml-auto"></p>
+                                </div>
+                                <div class="rounded-xl border border-slate-200 bg-slate-50 overflow-hidden">
+                                    <svg id="lote-map-svg" viewBox="0 0 100 100" class="w-full block aspect-[4/3] max-h-[340px]" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Plano ilustrativo de lotes"></svg>
+                                </div>
+                                <div id="lote-map-detail" class="hidden rounded-lg border border-vamerBlue/20 bg-vamerBlue/[0.06] p-4 text-sm space-y-2">
+                                    <p class="font-black text-vamerBlue text-base" id="lote-map-detail-title"></p>
+                                    <div class="grid sm:grid-cols-2 gap-2 text-slate-700" id="lote-map-detail-body"></div>
+                                    <button type="button" id="lote-map-detail-cotizar" class="mt-2 px-4 py-2 rounded-lg bg-vamerBlue text-white text-xs font-bold hover:bg-vamerBlueSoft transition">Abrir en simulador</button>
+                                </div>
+                            </div>
                         </div>
                         <div class="overflow-x-auto">
                             <table class="w-full text-sm">
@@ -946,7 +966,225 @@
             return `Gs. ${value.toLocaleString("es-PY")}`;
         }
 
+        function parseAreaM2(areaStr) {
+            return parseFloat(String(areaStr).replace(",", ".")) || 0;
+        }
+
+        window.__loteMapHighlightId = null;
+
+        function layoutBinaryTreemap(nodes, x, y, w, h) {
+            if (!nodes.length) return;
+            if (nodes.length === 1) {
+                const n = nodes[0];
+                n._bx = x;
+                n._by = y;
+                n._bw = w;
+                n._bh = h;
+                return;
+            }
+            const total = nodes.reduce((s, n) => s + n._area, 0) || 1;
+            let acc = 0;
+            let split = 0;
+            const half = total / 2;
+            while (split < nodes.length - 1 && acc + nodes[split]._area < half) {
+                acc += nodes[split]._area;
+                split++;
+            }
+            split = Math.max(1, split);
+            if (split >= nodes.length) split = nodes.length - 1;
+            const left = nodes.slice(0, split);
+            const right = nodes.slice(split);
+            const leftSum = left.reduce((s, n) => s + n._area, 0);
+            const t = leftSum / total;
+            if (w >= h) {
+                const wL = w * t;
+                layoutBinaryTreemap(left, x, y, wL, h);
+                layoutBinaryTreemap(right, x + wL, y, w - wL, h);
+            } else {
+                const hT = h * t;
+                layoutBinaryTreemap(left, x, y, w, hT);
+                layoutBinaryTreemap(right, x, y + hT, w, h - hT);
+            }
+        }
+
+        function renderLoteMap(blockKey) {
+            const svg = document.getElementById("lote-map-svg");
+            const totalEl = document.getElementById("lote-map-total-m2");
+            const detail = document.getElementById("lote-map-detail");
+            if (!svg) return;
+            if (detail) detail.classList.add("hidden");
+            const rows = officialPriceData[blockKey] || [];
+            if (!rows.length) {
+                svg.innerHTML = "";
+                const t = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                t.setAttribute("x", "50");
+                t.setAttribute("y", "52");
+                t.setAttribute("text-anchor", "middle");
+                t.setAttribute("fill", "#94a3b8");
+                t.setAttribute("font-size", "4");
+                t.textContent = "Sin lotes";
+                svg.appendChild(t);
+                if (totalEl) totalEl.textContent = "";
+                return;
+            }
+
+            const nodes = rows.map((r) => ({
+                lot: r.lot,
+                area: r.area,
+                cash: r.cash,
+                monthly: r.monthly,
+                financed: r.financed,
+                _area: parseAreaM2(r.area)
+            }));
+            const sumM2 = nodes.reduce((s, n) => s + n._area, 0);
+            if (totalEl) {
+                totalEl.textContent =
+                sumM2 > 0
+                    ? `Superficie sumada (tabla): ${sumM2.toLocaleString("es-PY", { maximumFractionDigits: 2 })} m² · Manzana ${blockKey}`
+                    : "";
+            }
+
+            const sorted = nodes.slice().sort((a, b) => b._area - a._area);
+            layoutBinaryTreemap(sorted, 0, 0, 100, 100);
+
+            const pad = 0.35;
+            while (svg.firstChild) svg.removeChild(svg.firstChild);
+
+            sorted.forEach((n) => {
+                const hx = window.__loteMapHighlightId && String(n.lot).toUpperCase() === String(window.__loteMapHighlightId).toUpperCase();
+                const x = n._bx + pad;
+                const y = n._by + pad;
+                const w = Math.max(0.2, n._bw - pad * 2);
+                const h = Math.max(0.2, n._bh - pad * 2);
+                const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+                g.style.cursor = "pointer";
+                const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+                rect.setAttribute("x", x);
+                rect.setAttribute("y", y);
+                rect.setAttribute("width", w);
+                rect.setAttribute("height", h);
+                rect.setAttribute("rx", "0.6");
+                rect.setAttribute("fill", hx ? "rgba(184, 147, 47, 0.35)" : "rgba(15, 47, 104, 0.14)");
+                rect.setAttribute("stroke", hx ? "#b8932f" : "#0f2f68");
+                rect.setAttribute("stroke-width", hx ? "0.85" : "0.35");
+                rect.setAttribute("vector-effect", "non-scaling-stroke");
+                g.appendChild(rect);
+                const fs = w > 12 && h > 8 ? 3.4 : w > 7 ? 2.6 : 2.1;
+                const txt = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                txt.setAttribute("x", x + w / 2);
+                txt.setAttribute("y", y + h / 2);
+                txt.setAttribute("text-anchor", "middle");
+                txt.setAttribute("dominant-baseline", "central");
+                txt.setAttribute("fill", "#0f2f68");
+                txt.setAttribute("font-size", String(fs));
+                txt.setAttribute("font-weight", "800");
+                txt.textContent = n.lot;
+                g.appendChild(txt);
+                g.setAttribute("tabindex", "0");
+                g.setAttribute("role", "button");
+                g.addEventListener("click", function () {
+                    window.__loteMapHighlightId = n.lot;
+                    renderLoteMap(blockKey);
+                    showLoteMapDetail(n);
+                    activateCuoteroFromTable(n.lot, n.cash);
+                });
+                g.addEventListener("keydown", function (ev) {
+                    if (ev.key === "Enter" || ev.key === " ") {
+                        ev.preventDefault();
+                        g.dispatchEvent(new MouseEvent("click"));
+                    }
+                });
+                svg.appendChild(g);
+            });
+
+            const frame = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+            frame.setAttribute("x", "0");
+            frame.setAttribute("y", "0");
+            frame.setAttribute("width", "100");
+            frame.setAttribute("height", "100");
+            frame.setAttribute("fill", "none");
+            frame.setAttribute("stroke", "#cbd5e1");
+            frame.setAttribute("stroke-width", "0.4");
+            svg.insertBefore(frame, svg.firstChild);
+        }
+
+        function showLoteMapDetail(n) {
+            const detail = document.getElementById("lote-map-detail");
+            const title = document.getElementById("lote-map-detail-title");
+            const body = document.getElementById("lote-map-detail-body");
+            const btn = document.getElementById("lote-map-detail-cotizar");
+            if (!detail || !title || !body || !btn) return;
+            btn.classList.remove("hidden");
+            title.textContent = n.lot;
+            body.innerHTML = [
+                `<div><span class="text-slate-500 text-xs font-bold">Superficie</span><br><strong>${n.area} m²</strong></div>`,
+                `<div><span class="text-slate-500 text-xs font-bold">Precio contado</span><br><strong>${formatGs(n.cash)}</strong></div>`,
+                `<div><span class="text-slate-500 text-xs font-bold">Cuota referencial</span><br><strong>${formatGs(n.monthly)}</strong></div>`,
+                `<div><span class="text-slate-500 text-xs font-bold">Total financiado</span><br><strong>${formatGs(n.financed)}</strong></div>`
+            ].join("");
+            btn.onclick = function () {
+                activateCuoteroFromTable(n.lot, n.cash);
+            };
+            detail.classList.remove("hidden");
+        }
+
+        window.__vamerLoteMapSearch = function () {
+            const sel = document.getElementById("price-block-select");
+            const blockKey = sel ? sel.value : "A";
+            const raw = String((document.getElementById("lote-map-search") || {}).value || "").trim();
+            if (!raw) return;
+
+            let target = null;
+            const m = raw.toUpperCase().match(/^([A-Z])[\s\-]*(\d+)$/);
+            if (m) {
+                target = m[1] + "-" + m[2];
+            } else if (/^\d+$/.test(raw)) {
+                target = blockKey + "-" + raw;
+            } else {
+                return;
+            }
+
+            window.__loteMapPreserveHighlight = true;
+            window.__loteMapHighlightId = target;
+
+            const needBlock = target.split("-")[0];
+            if (officialPriceData[needBlock] && sel.value !== needBlock) {
+                sel.value = needBlock;
+                renderPriceBlock(needBlock);
+            } else {
+                renderPriceBlock(blockKey);
+            }
+            window.__loteMapPreserveHighlight = false;
+
+            const rows = officialPriceData[sel.value] || [];
+            const found = rows.some((r) => String(r.lot).toUpperCase() === target);
+            if (!found) {
+                window.__loteMapHighlightId = null;
+                renderLoteMap(sel.value);
+                const detail = document.getElementById("lote-map-detail");
+                const tEl = document.getElementById("lote-map-detail-title");
+                const bEl = document.getElementById("lote-map-detail-body");
+                const cBtn = document.getElementById("lote-map-detail-cotizar");
+                if (detail && tEl && bEl && cBtn) {
+                    detail.classList.remove("hidden");
+                    tEl.textContent = "No encontrado";
+                    bEl.innerHTML =
+                        `<p class="sm:col-span-2 text-slate-600">No hay <strong>${target}</strong> en la tabla de esta manzana. Cambiá la manzana o el número. <span class="text-slate-500">(En demo, B llega a B-12; E incluye E-15.)</span></p>`;
+                    cBtn.classList.add("hidden");
+                }
+                return;
+            }
+
+            const row = rows.find((r) => String(r.lot).toUpperCase() === target);
+            if (row) showLoteMapDetail(row);
+            const panel = document.getElementById("lote-map-panel");
+            if (panel) panel.scrollIntoView({ behavior: "smooth", block: "start" });
+        };
+
         function renderPriceBlock(blockKey) {
+            if (!window.__loteMapPreserveHighlight) {
+                window.__loteMapHighlightId = null;
+            }
             const tbody = document.getElementById("price-table-body");
             const rows = officialPriceData[blockKey] || [];
             const cotizarLabel = String(window.__VAMER_COTIZAR_LABEL || "Cotizar").replace(/</g, "");
@@ -976,6 +1214,7 @@
             document.getElementById("summary-max").innerText = formatGs(max);
             document.getElementById("summary-avg").innerText = formatGs(avgMonthly);
             document.getElementById("price-block-select").value = blockKey;
+            renderLoteMap(blockKey);
         }
 
         function activateCuoteroFromTable(lotId, cashPrice) {
