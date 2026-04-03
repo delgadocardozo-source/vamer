@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <script>
+        (function () {
+            var p = location.pathname;
+            var basePath = /\.[^./]+$/i.test(p) ? p.replace(/[^/]+$/, "") : (p.endsWith("/") ? p : p + "/");
+            var b = document.createElement("base");
+            b.href = basePath;
+            var first = document.head.firstElementChild;
+            if (first) document.head.insertBefore(b, first.nextSibling);
+            else document.head.appendChild(b);
+        })();
+    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VAMER | Loteamientos en Encarnacion</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        vamerBlue: "#0f2f68",
+                        vamerBlueSoft: "#1c438a",
+                        vamerGold: "#b8932f",
+                        vamerGrey: "#2f3b4a",
+                        vamerBg: "#f4f6f9"
+                    }
+                }
+            }
+        };
+    </script>
+    <style>
+        .slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            background: #d1d5db;
+            outline: none;
+            border-radius: 9999px;
+        }
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #b8932f;
+            cursor: pointer;
+            border: 2px solid #ffffff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+    </style>
+</head>
+<body class="bg-vamerBg text-vamerGrey font-sans min-h-screen">
+    <header class="bg-white sticky top-0 z-50 border-b border-slate-200 shadow-sm">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3 cursor-pointer" onclick="showView('landing')">
+                <svg width="34" height="34" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M50 95L10 25H35L50 65L65 25H90L50 95Z" fill="#0f2f68"></path>
+                    <path d="M50 95L38 25H50L60 65L50 95Z" fill="#b8932f" fill-opacity="0.75"></path>
+                </svg>
+                <div class="leading-tight">
+                    <h1 id="cms-brand-name" class="text-2xl font-black tracking-tight text-vamerBlue">VAMER</h1>
+                    <p id="cms-brand-tagline" class="text-[10px] uppercase tracking-[0.18em] text-vamerGold font-bold">Desarrollos Inmobiliarios</p>
+                </div>
+            </div>
+
+            <nav id="public-nav" class="hidden md:flex items-center gap-7">
+                <button onclick="showView('lotes')" class="text-sm font-semibold hover:text-vamerBlue transition"><span id="cms-nav-lotes">Lotes y Disponibilidad</span></button>
+                <button onclick="showView('login')" class="bg-vamerBlue text-white px-5 py-2.5 rounded-full text-sm font-bold hover:bg-vamerBlueSoft transition">
+                    <span id="cms-nav-admin">Acceso Admin</span>
+                </button>
+            </nav>
+
+            <nav id="admin-nav" class="hidden md:flex items-center gap-5">
+                <span id="cms-admin-nav-label" class="text-xs text-slate-400">Panel Ejecutivo</span>
+                <button onclick="showView('landing')" class="text-xs font-semibold hover:text-vamerBlue"><span id="cms-cerrar-ses-nav">Cerrar sesion</span></button>
+                <div id="cms-avatar-txt" class="h-9 w-9 rounded-full bg-vamerBlue text-white text-sm font-bold flex items-center justify-center">VA</div>
+            </nav>
+
+            <button id="mobile-menu-btn" onclick="toggleMobileMenu()" class="md:hidden bg-slate-100 border border-slate-200 rounded-lg p-2 text-vamerBlue" aria-label="Abrir menu">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+        </div>
+            <div id="mobile-menu" class="hidden md:hidden border-t border-slate-200 bg-white px-6 py-4">
+            <div id="mobile-public-nav" class="space-y-3">
+                <button onclick="showView('landing')" class="w-full text-left text-sm font-semibold py-2"><span id="cms-mobile-inicio">Inicio</span></button>
+                <button onclick="showView('lotes')" class="w-full text-left text-sm font-semibold py-2"><span id="cms-mobile-lotes">Lotes y Disponibilidad</span></button>
+                <button onclick="showView('login')" class="w-full bg-vamerBlue text-white px-4 py-2.5 rounded-lg text-sm font-bold"><span id="cms-mobile-admin">Acceso Admin</span></button>
+            </div>
+            <div id="mobile-admin-nav" class="hidden space-y-3">
+                <p class="text-xs text-slate-400 font-semibold"><span id="cms-mobile-admin-label">Panel Ejecutivo</span></p>
+                <button onclick="showView('admin')" class="w-full text-left text-sm font-semibold py-2"><span id="cms-mobile-dashboard">Ver dashboard</span></button>
+                <button onclick="showView('landing')" class="w-full text-left text-sm font-semibold py-2"><span id="cms-mobile-cerrar">Cerrar sesion</span></button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8 md:py-12">
+        <section id="view-landing" class="view space-y-16">
+            <div class="relative overflow-hidden rounded-3xl shadow-xl min-h-[380px] md:min-h-[420px]">
+                <img id="cms-hero-img" src="vamer-assets/hero-costanera.png" alt="Costanera y entorno urbano en Encarnacion, Paraguay" class="absolute inset-0 w-full h-full object-cover object-[center_35%]" width="1920" height="1080" loading="eager" decoding="async">
+                <div class="absolute inset-0 bg-gradient-to-b from-vamerBlue/95 via-vamerBlue/80 to-vamerBlue/55 sm:bg-gradient-to-r sm:from-vamerBlue sm:via-vamerBlue/88 sm:to-vamerBlue/25"></div>
+                <div class="relative z-10 text-white p-7 sm:p-10 md:p-14">
+                    <div class="absolute -right-10 -top-10 h-48 w-48 rounded-full bg-white/10 blur-2xl pointer-events-none hidden md:block"></div>
+                    <div class="absolute -left-8 -bottom-10 h-44 w-44 rounded-full bg-vamerGold/20 blur-2xl pointer-events-none hidden md:block"></div>
+                    <div class="relative mb-5 inline-flex bg-white/10 border border-white/20 rounded-full p-1">
+                        <button id="mode-presentation-btn" onclick="setLandingMode('presentation')" class="px-4 py-1.5 rounded-full text-xs font-bold bg-white text-vamerBlue"><span id="cms-hero-mode-pres">Modo presentacion</span></button>
+                        <button id="mode-leads-btn" onclick="setLandingMode('leads')" class="px-4 py-1.5 rounded-full text-xs font-bold text-white/90"><span id="cms-hero-mode-leads">Modo captacion</span></button>
+                    </div>
+                    <p id="hero-kicker" class="text-xs uppercase tracking-[0.2em] font-bold text-amber-200 mb-4 max-w-3xl">Empresa familiar con vision de largo plazo</p>
+                    <h2 id="hero-title" class="text-3xl sm:text-4xl md:text-5xl font-black leading-tight tracking-tight max-w-3xl">
+                        VAMER acompana a familias e inversores a construir patrimonio en Encarnacion.
+                    </h2>
+                    <p id="hero-text" class="mt-5 max-w-2xl text-sm md:text-base text-slate-100 leading-relaxed">
+                        Somos una empresa familiar inmobiliaria al servicio de la gente: combinamos cercania comercial, transparencia legal
+                        y gestion corporativa para que cada cliente compre con seguridad, confianza y proyeccion de valor.
+                    </p>
+                    <div class="mt-8 flex flex-col sm:flex-row gap-3">
+                        <button type="button" id="hero-main-cta" class="bg-vamerGold hover:bg-yellow-600 text-white px-7 py-3 rounded-full text-sm font-bold transition w-full sm:w-auto">
+                            Ver lotes disponibles
+                        </button>
+                        <button type="button" id="hero-secondary-cta" class="border border-white/40 hover:bg-white/10 px-7 py-3 rounded-full text-sm font-bold transition w-full sm:w-auto">
+                            Ingreso administrador
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-4 gap-5">
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                    <p id="cms-metric-0-label" class="text-[11px] uppercase tracking-wider text-slate-400 font-bold">Lotes totales</p>
+                    <p id="cms-metric-0-value" class="text-3xl font-black text-vamerBlue mt-2">256</p>
+                </div>
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                    <p id="cms-metric-1-label" class="text-[11px] uppercase tracking-wider text-slate-400 font-bold">Disponibles</p>
+                    <p id="cms-metric-1-value" class="text-3xl font-black text-emerald-600 mt-2">256</p>
+                </div>
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                    <p id="cms-metric-2-label" class="text-[11px] uppercase tracking-wider text-slate-400 font-bold">Reservados</p>
+                    <p id="cms-metric-2-value" class="text-3xl font-black text-amber-600 mt-2">0</p>
+                </div>
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                    <p id="cms-metric-3-label" class="text-[11px] uppercase tracking-wider text-slate-400 font-bold">Vendidos</p>
+                    <p id="cms-metric-3-value" class="text-3xl font-black text-rose-600 mt-2">0</p>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8 md:gap-10 items-center">
+                <div>
+                    <h3 id="cms-value-title" class="text-3xl font-black text-vamerBlue tracking-tight mb-4">VAMER Encarnacion: propuesta de valor</h3>
+                    <p id="cms-value-text" class="text-slate-600 leading-relaxed mb-5">
+                        Modelo comercial orientado a conversion: ubicacion estrategica, informes claros de disponibilidad, financiacion
+                        transparente y seguimiento de rendimiento para direccion comercial.
+                    </p>
+                    <ul class="space-y-3 text-sm font-semibold">
+                        <li class="flex items-center gap-2"><span class="text-vamerGold">●</span> <span id="cms-value-li-0">Estado por lote actualizado para asesores y clientes.</span></li>
+                        <li class="flex items-center gap-2"><span class="text-vamerGold">●</span> <span id="cms-value-li-1">Simulador de cuota para acelerar decisiones de compra.</span></li>
+                        <li class="flex items-center gap-2"><span class="text-vamerGold">●</span> <span id="cms-value-li-2">Panel de KPIs: ventas, prospeccion, comisiones y cobranza.</span></li>
+                    </ul>
+                </div>
+                <div class="h-64 sm:h-80 rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                    <img id="cms-value-img" src="vamer-assets/proyecto-vamer-lotes.png" alt="Proyecto de loteamiento VAMER en Encarnacion" class="w-full h-full object-cover object-center" width="1200" height="800" loading="lazy" decoding="async">
+                </div>
+            </div>
+
+            <div class="relative overflow-hidden border border-slate-200 rounded-2xl p-6 md:p-8 shadow-sm">
+                <div class="absolute inset-0">
+                    <div id="cms-encarnacion-bg" class="absolute inset-0 bg-cover bg-center scale-105 opacity-25 blur-sm" style="background-image: url('vamer-assets/hero-costanera.png');"></div>
+                    <div class="absolute inset-0 bg-white/85"></div>
+                </div>
+                <div class="relative">
+                    <h3 id="cms-enc-title" class="text-2xl font-black text-vamerBlue tracking-tight mb-3">Por que Encarnacion potencia tu inversion</h3>
+                    <p id="cms-enc-intro" class="text-slate-600 text-sm md:text-base leading-relaxed mb-5">
+                        Encarnacion combina calidad de vida, turismo y desarrollo urbano sostenido. Su costanera, playas urbanas y dinamica comercial
+                        impulsan la demanda inmobiliaria, generando oportunidades concretas para vivienda, renta y valorizacion de tierra a mediano plazo.
+                    </p>
+                    <div class="grid sm:grid-cols-3 gap-4">
+                        <div class="bg-white/80 border rounded-xl p-4 backdrop-blur-[1px]">
+                            <p id="cms-enc-card-0-t" class="text-sm font-bold text-vamerBlue">Costanera activa todo el ano</p>
+                            <p id="cms-enc-card-0-d" class="text-xs text-slate-500 mt-1">Conectividad, espacio publico y atractivo para nuevas urbanizaciones.</p>
+                        </div>
+                        <div class="bg-white/80 border rounded-xl p-4 backdrop-blur-[1px]">
+                            <p id="cms-enc-card-1-t" class="text-sm font-bold text-vamerBlue">Playas y turismo consolidado</p>
+                            <p id="cms-enc-card-1-d" class="text-xs text-slate-500 mt-1">Mayor flujo de visitantes e interes creciente en propiedades.</p>
+                        </div>
+                        <div class="bg-white/80 border rounded-xl p-4 backdrop-blur-[1px]">
+                            <p id="cms-enc-card-2-t" class="text-sm font-bold text-vamerBlue">Expansion residencial planificada</p>
+                            <p id="cms-enc-card-2-d" class="text-xs text-slate-500 mt-1">Buen escenario para compra patrimonial y crecimiento de plusvalia.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+                    <h3 id="cms-legal-title" class="text-xl font-black text-vamerBlue mb-4">Confianza legal y operativa</h3>
+                    <ul class="space-y-3 text-sm text-slate-600">
+                        <li class="flex gap-2"><span class="text-vamerGold font-black">01.</span> <span id="cms-legal-li-0">Verificacion documental previa y trazabilidad de cada operacion.</span></li>
+                        <li class="flex gap-2"><span class="text-vamerGold font-black">02.</span> <span id="cms-legal-li-1">Contratos claros, cronograma de pagos y acompanamiento comercial.</span></li>
+                        <li class="flex gap-2"><span class="text-vamerGold font-black">03.</span> <span id="cms-legal-li-2">Reportes ejecutivos para direccion y control interno de ventas.</span></li>
+                    </ul>
+                    <div class="mt-5 grid grid-cols-2 gap-3">
+                        <div class="bg-slate-50 border rounded-lg p-3">
+                            <p id="cms-legal-st-0-l" class="text-[11px] uppercase text-slate-400 font-bold">Satisfaccion postventa</p>
+                            <p id="cms-legal-st-0-v" class="text-xl font-black text-vamerBlue">94%</p>
+                        </div>
+                        <div class="bg-slate-50 border rounded-lg p-3">
+                            <p id="cms-legal-st-1-l" class="text-[11px] uppercase text-slate-400 font-bold">Operaciones auditables</p>
+                            <p id="cms-legal-st-1-v" class="text-xl font-black text-vamerBlue">100%</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+                    <h3 id="cms-testi-title" class="text-xl font-black text-vamerBlue mb-4">Lo que dicen nuestros clientes</h3>
+                    <div class="space-y-4">
+                        <div class="bg-slate-50 border rounded-xl p-4">
+                            <p id="cms-testi-0-q" class="text-sm text-slate-600 italic">"Nos explicaron cada paso con claridad. Sentimos acompanamiento real y profesional."</p>
+                            <p id="cms-testi-0-a" class="text-xs font-bold text-vamerBlue mt-2">Familia Benitez - Compradora residencial</p>
+                        </div>
+                        <div class="bg-slate-50 border rounded-xl p-4">
+                            <p id="cms-testi-1-q" class="text-sm text-slate-600 italic">"Como inversores, valoramos su orden en datos, disponibilidad y cumplimiento comercial."</p>
+                            <p id="cms-testi-1-a" class="text-xs font-bold text-vamerBlue mt-2">Grupo Delta - Inversion inmobiliaria</p>
+                        </div>
+                        <div class="bg-slate-50 border rounded-xl p-4">
+                            <p id="cms-testi-2-q" class="text-sm text-slate-600 italic">"Empresa familiar seria, con trato humano y enfoque corporativo en resultados."</p>
+                            <p id="cms-testi-2-a" class="text-xs font-bold text-vamerBlue mt-2">R. Martinez - Cliente referido</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="view-lotes" class="view hidden space-y-8">
+            <div class="flex flex-wrap gap-4 justify-between items-center border-b border-slate-200 pb-5">
+                <div>
+                    <h2 id="cms-lotes-h" class="text-3xl font-black text-vamerBlue tracking-tight">Loteamiento Encarnacion - Disponibilidad</h2>
+                    <p id="cms-lotes-sub" class="text-sm text-slate-500 mt-1">Visualizacion comercial para atencion al cliente.</p>
+                </div>
+                <div class="flex items-center gap-2 bg-white border rounded-full px-3 py-2 text-xs">
+                    <span id="cms-lotes-est-label" class="font-bold text-slate-400">Estado:</span>
+                    <span id="cms-est-disp" class="px-2 py-1 rounded-full bg-emerald-50 text-emerald-700 font-semibold">Disponible</span>
+                    <span id="cms-est-res" class="px-2 py-1 rounded-full bg-amber-50 text-amber-700 font-semibold">Reservado</span>
+                    <span id="cms-est-vend" class="px-2 py-1 rounded-full bg-rose-50 text-rose-700 font-semibold">Vendido</span>
+                </div>
+            </div>
+
+            <div class="grid lg:grid-cols-3 gap-6 lg:gap-8">
+                <div class="lg:col-span-2 bg-white rounded-2xl p-7 border border-slate-200 shadow-sm">
+                    <h3 id="cms-lotes-sec-t" class="font-bold text-vamerBlue">Disponibilidad y cotizacion por manzana</h3>
+                    <p id="cms-lotes-sec-h" class="text-xs text-slate-500 mb-6">Interfaz unificada: selecciona manzana, revisa precios oficiales y cotiza cualquier lote desde la misma tabla.</p>
+
+                    <div class="border border-slate-200 rounded-xl">
+                        <div class="p-4 border-b bg-slate-50 space-y-4">
+                            <div class="flex flex-col sm:flex-row sm:items-end gap-3 sm:gap-4">
+                                <div class="flex-1">
+                                    <p id="cms-price-t" class="text-sm font-bold text-vamerBlue">Precios oficiales por manzana</p>
+                                    <p id="cms-price-h" class="text-xs text-slate-500">Selecciona una manzana para ver detalle y cotizar cualquier lote en el cuotero.</p>
+                                </div>
+                                <div class="w-full sm:w-56">
+                                    <label id="cms-lbl-manzana" for="price-block-select" class="block text-xs font-bold text-slate-500 mb-1">Manzana</label>
+                                    <select id="price-block-select" onchange="renderPriceBlock(this.value)" class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm font-semibold text-vamerBlue">
+                                        <option value="A">Manzana A</option>
+                                        <option value="B">Manzana B</option>
+                                        <option value="C">Manzana C</option>
+                                        <option value="D">Manzana D</option>
+                                        <option value="E">Manzana E</option>
+                                        <option value="F">Manzana F</option>
+                                        <option value="G">Manzana G</option>
+                                        <option value="H">Manzana H</option>
+                                        <option value="I">Manzana I</option>
+                                        <option value="J">Manzana J</option>
+                                        <option value="K">Manzana K</option>
+                                        <option value="L">Manzana L</option>
+                                        <option value="M">Manzana M</option>
+                                        <option value="N">Manzana N</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 lg:grid-cols-4 gap-2">
+                                <div class="bg-white border rounded-lg p-3">
+                                    <p id="cms-sum-lots-lbl" class="text-[11px] uppercase text-slate-400 font-bold">Lotes en manzana</p>
+                                    <p id="summary-lots" class="text-xl font-black text-vamerBlue">0</p>
+                                </div>
+                                <div class="bg-white border rounded-lg p-3">
+                                    <p id="cms-sum-min-lbl" class="text-[11px] uppercase text-slate-400 font-bold">Precio minimo</p>
+                                    <p id="summary-min" class="text-xl font-black text-vamerBlue">Gs. 0</p>
+                                </div>
+                                <div class="bg-white border rounded-lg p-3">
+                                    <p id="cms-sum-max-lbl" class="text-[11px] uppercase text-slate-400 font-bold">Precio maximo</p>
+                                    <p id="summary-max" class="text-xl font-black text-vamerBlue">Gs. 0</p>
+                                </div>
+                                <div class="bg-white border rounded-lg p-3">
+                                    <p id="cms-sum-avg-lbl" class="text-[11px] uppercase text-slate-400 font-bold">Cuota promedio</p>
+                                    <p id="summary-avg" class="text-xl font-black text-vamerBlue">Gs. 0</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm">
+                                <thead class="bg-slate-50 text-slate-600">
+                                    <tr>
+                                        <th id="cms-th-0" class="text-left p-3 font-bold">Lote</th>
+                                        <th id="cms-th-1" class="text-left p-3 font-bold">Area (m2)</th>
+                                        <th id="cms-th-2" class="text-left p-3 font-bold">Precio contado</th>
+                                        <th id="cms-th-3" class="text-left p-3 font-bold">Cuota mensual</th>
+                                        <th id="cms-th-4" class="text-left p-3 font-bold">Total financiado</th>
+                                        <th id="cms-th-5" class="text-left p-3 font-bold">Accion</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="price-table-body" class="divide-y divide-slate-100"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-vamerBlue text-white rounded-2xl p-6 sm:p-7 shadow-lg h-fit sticky top-24">
+                    <h3 id="cms-sim-title" class="text-xl font-black">Simulador de financiacion</h3>
+                    <p id="cms-sim-help" class="text-xs text-slate-200 mt-1 mb-5">Calculadora orientativa con tasa mensual referencial del mercado de loteamientos en Paraguay.</p>
+
+                    <div id="cuotero-empty" class="border border-dashed border-blue-300 rounded-xl p-6 text-center text-blue-100 text-sm">
+                        <span id="cms-cuotero-empty">Selecciona un lote para activar el simulador.</span>
+                    </div>
+
+                    <div id="cuotero-active" class="hidden space-y-4">
+                        <div class="bg-blue-950 p-4 rounded-xl flex justify-between items-center">
+                            <div>
+                                <p id="cms-lbl-lote-sel" class="text-xs text-blue-200">Lote seleccionado</p>
+                                <p id="display-lot-id" class="text-2xl font-black text-vamerGold">A-1</p>
+                            </div>
+                            <span id="display-lot-status" class="text-[11px] uppercase px-2 py-1 rounded bg-emerald-100 text-emerald-800 font-bold">Disponible</span>
+                        </div>
+
+                        <div>
+                            <label id="cms-lbl-precio" class="text-xs font-bold text-blue-100">Precio contado (Gs.)</label>
+                            <input id="display-price-contado" readonly class="w-full mt-1 bg-white text-vamerBlue font-bold text-lg rounded-lg p-3" value="95.000.000">
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between mb-2">
+                                <label id="cms-lbl-plazo" class="text-xs font-bold text-blue-100">Plazo (meses)</label>
+                                <span id="display-plazo" class="text-lg font-black text-vamerGold">120</span>
+                            </div>
+                            <input id="plazo-slider" type="range" min="12" max="120" value="120" class="slider" oninput="updateCuota()">
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="bg-blue-950 rounded-lg p-3">
+                                <p id="cms-lbl-tasa" class="text-[11px] text-blue-200">Tasa mensual aplicada</p>
+                                <p id="display-tasa" class="text-lg font-black text-vamerGold">1.65%</p>
+                            </div>
+                            <div class="bg-blue-950 rounded-lg p-3">
+                                <p id="cms-lbl-entrega" class="text-[11px] text-blue-200">Entrega estimada</p>
+                                <p id="display-entrega" class="text-lg font-black text-emerald-300">Gs. 9.500.000</p>
+                            </div>
+                        </div>
+
+                        <div class="pt-3 border-t border-blue-800">
+                            <p id="cms-lbl-cuota" class="text-xs text-blue-200">Cuota mensual estimada</p>
+                            <p class="text-3xl font-black text-emerald-300">Gs. <span id="display-cuota">791.667</span></p>
+                            <p id="cms-cuota-nota" class="text-[11px] text-blue-200 mt-1">Calculo con sistema de cuota fija sobre saldo financiado.</p>
+                        </div>
+
+                        <button id="cms-btn-contacto" type="button" class="w-full bg-white text-vamerBlue py-3 rounded-lg text-sm font-bold hover:bg-slate-100 transition">
+                            Solicitar contacto comercial
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="view-login" class="view hidden flex items-center justify-center pt-10 md:pt-16">
+            <div class="w-full max-w-md bg-white p-8 rounded-2xl border border-slate-200 shadow-md">
+                <div class="text-center mb-7">
+                    <h2 id="cms-login-title" class="text-2xl font-black text-vamerBlue tracking-tight">Acceso administrativo</h2>
+                    <p id="cms-login-sub" class="text-sm text-slate-500 mt-1">Demo para direccion y equipo comercial de VAMER.</p>
+                </div>
+                <div class="space-y-4">
+                    <input id="cms-login-user" type="text" placeholder="Usuario corporativo" class="w-full p-3 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-vamerBlue/20" autocomplete="username">
+                    <input id="cms-login-pass" type="password" placeholder="Contrasena" class="w-full p-3 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-vamerBlue/20" autocomplete="current-password">
+                    <button id="cms-login-submit" onclick="loginSimulado()" class="w-full bg-vamerBlue text-white py-3 rounded-lg text-sm font-bold hover:bg-vamerBlueSoft transition">
+                        Ingresar al panel ejecutivo
+                    </button>
+                    <div class="pt-2 border-t border-slate-100 text-center space-y-1">
+                        <a href="admin.html" target="_blank" rel="noopener noreferrer" id="cms-link-cms" class="inline-block text-sm font-bold text-vamerBlue hover:underline">Centro de mando del sitio (editar landing)</a>
+                        <p id="cms-link-cms-hint" class="text-xs text-slate-500">Abre el editor de textos, imagenes y precios en una pestana nueva.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="view-admin" class="view hidden space-y-8">
+            <div class="flex flex-wrap items-end justify-between gap-4 border-b border-slate-200 pb-5">
+                <div>
+                    <h2 id="cms-adm-title" class="text-3xl font-black text-vamerBlue tracking-tight">Panel Ejecutivo VAMER</h2>
+                    <p id="cms-adm-subtitle" class="text-sm text-slate-500 mt-1">Proyecto activo: Encarnacion | Corte comercial mensual</p>
+                </div>
+                <div class="flex flex-wrap items-center gap-2">
+                    <a href="admin.html" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 bg-vamerGold text-white px-4 py-2 rounded-lg text-sm font-bold hover:opacity-90 transition shadow-sm">
+                        <span id="cms-adm-cms-btn">Centro de mando del sitio</span>
+                    </a>
+                    <span id="cms-adm-demo-badge" class="text-xs bg-slate-100 px-3 py-1 rounded-full text-slate-500 font-semibold">Modo demo</span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="bg-white border border-slate-200 rounded-xl p-5">
+                    <p id="cms-adm-top-0-lbl" class="text-[11px] uppercase font-bold tracking-wider text-slate-400">Ventas cerradas</p>
+                    <p id="cms-adm-top-0-val" class="text-3xl font-black text-vamerBlue mt-2">22</p>
+                    <p id="cms-adm-top-0-hint" class="text-xs text-emerald-600 font-bold mt-1">+18% vs mes anterior</p>
+                </div>
+                <div class="bg-white border border-slate-200 rounded-xl p-5">
+                    <p id="cms-adm-top-1-lbl" class="text-[11px] uppercase font-bold tracking-wider text-slate-400">Facturacion mensual</p>
+                    <p id="cms-adm-top-1-val" class="text-2xl font-black text-emerald-600 mt-2">Gs. 1.980M</p>
+                    <p id="cms-adm-top-1-hint" class="text-xs text-slate-500 mt-1">Ticket prom: Gs. 90M</p>
+                </div>
+                <div class="bg-white border border-slate-200 rounded-xl p-5">
+                    <p id="cms-adm-top-2-lbl" class="text-[11px] uppercase font-bold tracking-wider text-slate-400">Leads calificados</p>
+                    <p id="cms-adm-top-2-val" class="text-3xl font-black text-vamerBlue mt-2">146</p>
+                    <p id="cms-adm-top-2-hint" class="text-xs text-emerald-600 font-bold mt-1">Conversion: 15.1%</p>
+                </div>
+                <div class="bg-white border border-slate-200 rounded-xl p-5">
+                    <p id="cms-adm-top-3-lbl" class="text-[11px] uppercase font-bold tracking-wider text-slate-400">Morosidad</p>
+                    <p id="cms-adm-top-3-val" class="text-3xl font-black text-rose-600 mt-2">3.4%</p>
+                    <p id="cms-adm-top-3-hint" class="text-xs text-slate-500 mt-1">Objetivo: menor a 4.0%</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div class="bg-white border border-slate-200 rounded-xl p-5">
+                    <p id="cms-adm-mid-0-lbl" class="text-[11px] uppercase font-bold tracking-wider text-slate-400">Tiempo promedio de cierre</p>
+                    <p id="cms-adm-mid-0-val" class="text-2xl font-black text-vamerBlue mt-2">19 dias</p>
+                    <p id="cms-adm-mid-0-hint" class="text-xs text-slate-500 mt-1">Desde lead calificado a reserva.</p>
+                </div>
+                <div class="bg-white border border-slate-200 rounded-xl p-5">
+                    <p id="cms-adm-mid-1-lbl" class="text-[11px] uppercase font-bold tracking-wider text-slate-400">Absorcion de inventario</p>
+                    <p id="cms-adm-mid-1-val" class="text-2xl font-black text-emerald-600 mt-2">8.2% mensual</p>
+                    <p id="cms-adm-mid-1-hint" class="text-xs text-slate-500 mt-1">Ritmo de salida de lotes disponibles.</p>
+                </div>
+                <div class="bg-white border border-slate-200 rounded-xl p-5">
+                    <p id="cms-adm-mid-2-lbl" class="text-[11px] uppercase font-bold tracking-wider text-slate-400">Precio promedio por m2</p>
+                    <p id="cms-adm-mid-2-val" class="text-2xl font-black text-vamerBlue mt-2">Gs. 258.000</p>
+                    <p id="cms-adm-mid-2-hint" class="text-xs text-slate-500 mt-1">Segmento loteamientos Encarnacion.</p>
+                </div>
+                <div class="bg-white border border-slate-200 rounded-xl p-5">
+                    <p id="cms-adm-mid-3-lbl" class="text-[11px] uppercase font-bold tracking-wider text-slate-400">Retencion de reservas</p>
+                    <p id="cms-adm-mid-3-val" class="text-2xl font-black text-emerald-600 mt-2">91.3%</p>
+                    <p id="cms-adm-mid-3-hint" class="text-xs text-slate-500 mt-1">Reservas que avanzan a contrato.</p>
+                </div>
+                <div class="bg-white border border-slate-200 rounded-xl p-5">
+                    <p id="cms-adm-mid-4-lbl" class="text-[11px] uppercase font-bold tracking-wider text-slate-400">Comision promedio pagada</p>
+                    <p id="cms-adm-mid-4-val" class="text-2xl font-black text-vamerBlue mt-2">4.5%</p>
+                    <p id="cms-adm-mid-4-hint" class="text-xs text-slate-500 mt-1">Sobre ventas cerradas del periodo.</p>
+                </div>
+                <div class="bg-white border border-slate-200 rounded-xl p-5">
+                    <p id="cms-adm-mid-5-lbl" class="text-[11px] uppercase font-bold tracking-wider text-slate-400">Indice de recomendacion</p>
+                    <p id="cms-adm-mid-5-val" class="text-2xl font-black text-emerald-600 mt-2">72 NPS</p>
+                    <p id="cms-adm-mid-5-hint" class="text-xs text-slate-500 mt-1">Satisfaccion y recompra referida.</p>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6 md:gap-7">
+                <div class="bg-white border border-slate-200 rounded-2xl p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 id="cms-adm-com-title" class="text-lg font-black text-vamerBlue">Control de comisionistas</h3>
+                        <button type="button" id="cms-adm-com-report" class="text-xs font-bold text-vamerBlue">Ver reporte</button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead class="text-slate-500">
+                                <tr class="border-b">
+                                    <th id="cms-adm-com-th-0" class="text-left pb-2">Asesor</th>
+                                    <th id="cms-adm-com-th-1" class="text-left pb-2">Ventas</th>
+                                    <th id="cms-adm-com-th-2" class="text-left pb-2">Comision</th>
+                                    <th id="cms-adm-com-th-3" class="text-left pb-2">Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100">
+                                <tr>
+                                    <td id="cms-adm-com-0-name" class="py-2 font-semibold">M. Benitez</td>
+                                    <td id="cms-adm-com-0-sales" class="py-2">6</td>
+                                    <td id="cms-adm-com-0-comm" class="py-2">Gs. 42.000.000</td>
+                                    <td class="py-2"><span id="cms-adm-com-0-status" class="text-xs bg-emerald-50 text-emerald-700 px-2 py-1 rounded-full font-semibold">Al dia</span></td>
+                                </tr>
+                                <tr>
+                                    <td id="cms-adm-com-1-name" class="py-2 font-semibold">L. Ayala</td>
+                                    <td id="cms-adm-com-1-sales" class="py-2">4</td>
+                                    <td id="cms-adm-com-1-comm" class="py-2">Gs. 27.000.000</td>
+                                    <td class="py-2"><span id="cms-adm-com-1-status" class="text-xs bg-amber-50 text-amber-700 px-2 py-1 rounded-full font-semibold">Pendiente cierre</span></td>
+                                </tr>
+                                <tr>
+                                    <td id="cms-adm-com-2-name" class="py-2 font-semibold">R. Duarte</td>
+                                    <td id="cms-adm-com-2-sales" class="py-2">3</td>
+                                    <td id="cms-adm-com-2-comm" class="py-2">Gs. 19.500.000</td>
+                                    <td class="py-2"><span id="cms-adm-com-2-status" class="text-xs bg-emerald-50 text-emerald-700 px-2 py-1 rounded-full font-semibold">Al dia</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="bg-white border border-slate-200 rounded-2xl p-6 space-y-4">
+                    <h3 id="cms-adm-rubro-title" class="text-lg font-black text-vamerBlue">KPIs estrategicos del rubro</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div class="bg-slate-50 border rounded-lg p-4">
+                            <p id="cms-adm-rubro-0-lbl" class="text-[10px] uppercase font-bold text-slate-400">Velocidad de venta</p>
+                            <p id="cms-adm-rubro-0-val" class="text-xl font-black text-vamerGrey mt-1">5.5 lotes/semana</p>
+                        </div>
+                        <div class="bg-slate-50 border rounded-lg p-4">
+                            <p id="cms-adm-rubro-1-lbl" class="text-[10px] uppercase font-bold text-slate-400">Cobranza efectiva</p>
+                            <p id="cms-adm-rubro-1-val" class="text-xl font-black text-emerald-600 mt-1">96.6%</p>
+                        </div>
+                        <div class="bg-slate-50 border rounded-lg p-4">
+                            <p id="cms-adm-rubro-2-lbl" class="text-[10px] uppercase font-bold text-slate-400">CAC comercial</p>
+                            <p id="cms-adm-rubro-2-val" class="text-xl font-black text-vamerGrey mt-1">Gs. 1.25M</p>
+                        </div>
+                        <div class="bg-slate-50 border rounded-lg p-4">
+                            <p id="cms-adm-rubro-3-lbl" class="text-[10px] uppercase font-bold text-slate-400">ROI promocion</p>
+                            <p id="cms-adm-rubro-3-val" class="text-xl font-black text-emerald-600 mt-1">3.8x</p>
+                        </div>
+                    </div>
+                    <p id="cms-adm-rubro-note" class="text-xs text-slate-500">
+                        Datos de demostracion para presentacion comercial. Se pueden conectar a un backend real para reportes dinamicos y auditoria.
+                    </p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="mt-12 md:mt-16 border-t border-slate-200 bg-white py-6 text-center text-xs text-slate-500 px-4">
+        <p id="cms-footer">&copy; 2026 VAMER Desarrollos Inmobiliarios | Borrador comercial para presentacion a cliente.</p>
+    </footer>
+
+    <div id="whatsapp-global" class="fixed bottom-6 right-6 z-50 hover:scale-105 transition">
+        <a id="cms-wa-link" href="https://wa.me/595900000000?text=Hola%20VAMER,%20me%20interesa%20conocer%20lotes%20disponibles%20en%20Encarnacion" target="_blank" rel="noopener noreferrer">
+            <div class="bg-green-500 text-white p-4 rounded-full shadow-lg">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12.031 0C5.397 0 .016 5.378.016 12.012c0 2.115.55 4.178 1.594 6l-1.594 5.827 5.961-1.565a12.023 12.023 0 0 0 6.054 1.636h.005c6.634 0 12.016-5.38 12.016-12.015C24.052 5.378 18.669 0 12.031 0Zm0 21.968a9.927 9.927 0 0 1-5.06-1.378l-.36-.214-3.765.986.998-3.67-.234-.374A9.94 9.94 0 0 1 2.062 12.01c0-5.503 4.48-9.982 9.97-9.982 5.503 0 9.982 4.479 9.982 9.982 0 5.498-4.48 9.958-9.983 9.958Z"></path>
+                </svg>
+            </div>
+        </a>
+    </div>
+
+    <script src="js/cms.js"></script>
+    <script>
+        let selectedLotPrice = 0;
+
+        function showView(viewName) {
+            document.querySelectorAll(".view").forEach((view) => view.classList.add("hidden"));
+            document.getElementById(`view-${viewName}`).classList.remove("hidden");
+
+            const publicNav = document.getElementById("public-nav");
+            const adminNav = document.getElementById("admin-nav");
+            const waGlobal = document.getElementById("whatsapp-global");
+
+            const mobilePublicNav = document.getElementById("mobile-public-nav");
+            const mobileAdminNav = document.getElementById("mobile-admin-nav");
+
+            if (viewName === "admin") {
+                publicNav.classList.add("hidden");
+                adminNav.classList.remove("hidden");
+                waGlobal.classList.add("hidden");
+                mobilePublicNav.classList.add("hidden");
+                mobileAdminNav.classList.remove("hidden");
+            } else {
+                adminNav.classList.add("hidden");
+                publicNav.classList.remove("hidden");
+                waGlobal.classList.remove("hidden");
+                mobileAdminNav.classList.add("hidden");
+                mobilePublicNav.classList.remove("hidden");
+            }
+
+            document.getElementById("mobile-menu").classList.add("hidden");
+        }
+
+        function toggleMobileMenu() {
+            document.getElementById("mobile-menu").classList.toggle("hidden");
+        }
+
+        function setLandingMode(mode) {
+            const presentationBtn = document.getElementById("mode-presentation-btn");
+            const leadsBtn = document.getElementById("mode-leads-btn");
+            const kicker = document.getElementById("hero-kicker");
+            const title = document.getElementById("hero-title");
+            const text = document.getElementById("hero-text");
+            const mainCta = document.getElementById("hero-main-cta");
+            const secondaryCta = document.getElementById("hero-secondary-cta");
+            const cfg = window.__VAMER_SITE_CFG;
+            const pres = cfg && cfg.hero && cfg.hero.presentation;
+            const leads = cfg && cfg.hero && cfg.hero.leads;
+
+            if (mode === "leads") {
+                presentationBtn.classList.remove("bg-white", "text-vamerBlue");
+                presentationBtn.classList.add("text-white/90");
+                leadsBtn.classList.add("bg-white", "text-vamerBlue");
+                leadsBtn.classList.remove("text-white/90");
+                kicker.textContent = leads ? leads.kicker : "Captacion comercial de alta conversion";
+                title.textContent = leads ? leads.title : "Lotes en Encarnacion con simulacion inmediata y atencion personalizada.";
+                text.textContent = leads ? leads.text : "Version orientada a captar consultas: destacamos disponibilidad, cuota estimada y contacto directo para acelerar visitas y reservas.";
+                mainCta.textContent = leads ? leads.ctaPrimary : "Quiero cotizar mi lote";
+                mainCta.onclick = function () { showView("lotes"); };
+                secondaryCta.textContent = leads ? leads.ctaSecondary : "Hablar por WhatsApp";
+                secondaryCta.onclick = function () {
+                    const u = window.__VAMER_WHATSAPP_LEADS || (cfg && cfg.integration && cfg.integration.whatsappUrl) || "";
+                    if (u) window.open(u, "_blank");
+                };
+            } else {
+                leadsBtn.classList.remove("bg-white", "text-vamerBlue");
+                leadsBtn.classList.add("text-white/90");
+                presentationBtn.classList.add("bg-white", "text-vamerBlue");
+                presentationBtn.classList.remove("text-white/90");
+                kicker.textContent = pres ? pres.kicker : "Empresa familiar con vision de largo plazo";
+                title.textContent = pres ? pres.title : "VAMER acompana a familias e inversores a construir patrimonio en Encarnacion.";
+                text.textContent = pres ? pres.text : "Somos una empresa familiar inmobiliaria al servicio de la gente: combinamos cercania comercial, transparencia legal y gestion corporativa para que cada cliente compre con seguridad, confianza y proyeccion de valor.";
+                mainCta.textContent = pres ? pres.ctaPrimary : "Ver lotes disponibles";
+                mainCta.onclick = function () { showView("lotes"); };
+                secondaryCta.textContent = pres ? pres.ctaSecondary : "Ingreso administrador";
+                secondaryCta.onclick = function () { showView("login"); };
+            }
+        }
+
+        function selectLot(lotId, price, status) {
+            selectedLotPrice = price;
+            document.getElementById("cuotero-empty").classList.add("hidden");
+            document.getElementById("cuotero-active").classList.remove("hidden");
+
+            document.getElementById("display-lot-id").innerText = lotId;
+            document.getElementById("display-price-contado").value = price.toLocaleString("es-PY");
+
+            const statusBadge = document.getElementById("display-lot-status");
+            const lp = window.__VAMER_SITE_CFG && window.__VAMER_SITE_CFG.lotesPage;
+            const txtDisp = (lp && lp.estadoDisponible) || "Disponible";
+            const txtRes = (lp && lp.estadoReservado) || "Reservado";
+            statusBadge.innerText = status === "reservado" ? txtRes : txtDisp;
+            statusBadge.classList.remove("bg-emerald-100", "text-emerald-800", "bg-amber-100", "text-amber-800");
+            if (status === "reservado") {
+                statusBadge.classList.add("bg-amber-100", "text-amber-800");
+            } else {
+                statusBadge.classList.add("bg-emerald-100", "text-emerald-800");
+            }
+
+            updateCuota();
+        }
+
+        let officialPriceData = {
+            A: [
+                { lot: "A-1", area: "384", cash: 56000000, monthly: 603076, financed: 78400000 },
+                { lot: "A-2", area: "384", cash: 56000000, monthly: 603076, financed: 78400000 },
+                { lot: "A-3", area: "384", cash: 56000000, monthly: 603076, financed: 78400000 },
+                { lot: "A-4", area: "384", cash: 56000000, monthly: 603076, financed: 78400000 },
+                { lot: "A-5", area: "384", cash: 56000000, monthly: 603076, financed: 78400000 },
+                { lot: "A-6", area: "454.18", cash: 66000000, monthly: 710769, financed: 92400000 },
+                { lot: "A-7", area: "402.32", cash: 66000000, monthly: 710769, financed: 92400000 },
+                { lot: "A-8", area: "555.76", cash: 66000000, monthly: 710769, financed: 92400000 },
+                { lot: "A-9", area: "431.46", cash: 66000000, monthly: 710769, financed: 92400000 },
+                { lot: "A-10", area: "413.04", cash: 66000000, monthly: 710769, financed: 92400000 },
+                { lot: "A-11", area: "432", cash: 56000000, monthly: 603076, financed: 78400000 },
+                { lot: "A-12", area: "360", cash: 56000000, monthly: 603076, financed: 78400000 },
+                { lot: "A-13", area: "360", cash: 56000000, monthly: 603076, financed: 78400000 },
+                { lot: "A-14", area: "360", cash: 56000000, monthly: 603076, financed: 78400000 },
+                { lot: "A-15", area: "360", cash: 56000000, monthly: 603076, financed: 78400000 },
+                { lot: "A-16", area: "432", cash: 66000000, monthly: 710769, financed: 92400000 }
+            ],
+            B: [
+                { lot: "B-1", area: "400.5", cash: 59000000, monthly: 635384, financed: 82600000 },
+                { lot: "B-2", area: "400.5", cash: 59000000, monthly: 635384, financed: 82600000 },
+                { lot: "B-3", area: "399.9", cash: 59000000, monthly: 635384, financed: 82600000 },
+                { lot: "B-4", area: "399.9", cash: 59000000, monthly: 635384, financed: 82600000 },
+                { lot: "B-5", area: "399.9", cash: 59000000, monthly: 635384, financed: 82600000 },
+                { lot: "B-6", area: "399.9", cash: 59000000, monthly: 635384, financed: 82600000 },
+                { lot: "B-7", area: "399.9", cash: 59000000, monthly: 635384, financed: 82600000 },
+                { lot: "B-8", area: "399.9", cash: 59000000, monthly: 635384, financed: 82600000 },
+                { lot: "B-9", area: "399.9", cash: 59000000, monthly: 635384, financed: 82600000 },
+                { lot: "B-10", area: "399.9", cash: 59000000, monthly: 635384, financed: 82600000 },
+                { lot: "B-11", area: "399.9", cash: 59000000, monthly: 635384, financed: 82600000 },
+                { lot: "B-12", area: "399.9", cash: 59000000, monthly: 635384, financed: 82600000 }
+            ],
+            C: [
+                { lot: "C-2", area: "399.9", cash: 59000000, monthly: 635384, financed: 82600000 },
+                { lot: "C-3", area: "360.58", cash: 53500000, monthly: 576153, financed: 74900000 },
+                { lot: "C-4", area: "360.58", cash: 53500000, monthly: 576153, financed: 74900000 },
+                { lot: "C-5", area: "360.58", cash: 53500000, monthly: 576153, financed: 74900000 },
+                { lot: "C-6", area: "360.58", cash: 53500000, monthly: 576153, financed: 74900000 },
+                { lot: "C-7", area: "360.58", cash: 53500000, monthly: 576153, financed: 74900000 },
+                { lot: "C-8", area: "361.12", cash: 53500000, monthly: 576153, financed: 74900000 },
+                { lot: "C-9", area: "400.1", cash: 59000000, monthly: 635384, financed: 82600000 },
+                { lot: "C-10", area: "400.1", cash: 59000000, monthly: 635384, financed: 82600000 }
+            ],
+            D: [
+                { lot: "D-1", area: "421.47", cash: 70000000, monthly: 753846, financed: 98000000 },
+                { lot: "D-2", area: "372", cash: 62000000, monthly: 667692, financed: 86800000 },
+                { lot: "D-3", area: "387.5", cash: 62000000, monthly: 667692, financed: 86800000 },
+                { lot: "D-4", area: "378.2", cash: 62000000, monthly: 667692, financed: 86800000 },
+                { lot: "D-5", area: "378.2", cash: 62000000, monthly: 667692, financed: 86800000 },
+                { lot: "D-6", area: "378.2", cash: 62000000, monthly: 667692, financed: 86800000 },
+                { lot: "D-7", area: "378.2", cash: 62000000, monthly: 667692, financed: 86800000 },
+                { lot: "D-8", area: "378.2", cash: 62000000, monthly: 667692, financed: 86800000 },
+                { lot: "D-9", area: "387.5", cash: 62000000, monthly: 667692, financed: 86800000 },
+                { lot: "D-10", area: "372", cash: 62000000, monthly: 667692, financed: 86800000 },
+                { lot: "D-11", area: "539.87", cash: 85000000, monthly: 915384, financed: 119000000 }
+            ],
+            E: [
+                { lot: "E-1", area: "372", cash: 61500000, monthly: 662307, financed: 86100000 },
+                { lot: "E-2", area: "372", cash: 61500000, monthly: 662307, financed: 86100000 },
+                { lot: "E-3", area: "372", cash: 61500000, monthly: 662307, financed: 86100000 },
+                { lot: "E-4", area: "372", cash: 61500000, monthly: 662307, financed: 86100000 },
+                { lot: "E-5", area: "372", cash: 61500000, monthly: 662307, financed: 86100000 },
+                { lot: "E-6", area: "372", cash: 61500000, monthly: 662307, financed: 86100000 },
+                { lot: "E-7", area: "372", cash: 61500000, monthly: 662307, financed: 86100000 },
+                { lot: "E-8", area: "372", cash: 61500000, monthly: 662307, financed: 86100000 },
+                { lot: "E-9", area: "372", cash: 61500000, monthly: 662307, financed: 86100000 },
+                { lot: "E-10", area: "372", cash: 61500000, monthly: 662307, financed: 86100000 },
+                { lot: "E-11", area: "364.16", cash: 61500000, monthly: 662307, financed: 86100000 },
+                { lot: "E-12", area: "362", cash: 61500000, monthly: 662307, financed: 86100000 },
+                { lot: "E-13", area: "532", cash: 75000000, monthly: 807692, financed: 105000000 },
+                { lot: "E-14", area: "372", cash: 61500000, monthly: 662307, financed: 86100000 },
+                { lot: "E-15", area: "372", cash: 61500000, monthly: 662307, financed: 86100000 },
+                { lot: "E-16", area: "372", cash: 61500000, monthly: 662307, financed: 86100000 },
+                { lot: "E-17", area: "372", cash: 61500000, monthly: 662307, financed: 86100000 },
+                { lot: "E-18", area: "372", cash: 61500000, monthly: 662307, financed: 86100000 },
+                { lot: "E-19", area: "372", cash: 61500000, monthly: 662307, financed: 86100000 },
+                { lot: "E-20", area: "372", cash: 61500000, monthly: 662307, financed: 86100000 },
+                { lot: "E-21", area: "372", cash: 61500000, monthly: 662307, financed: 86100000 },
+                { lot: "E-22", area: "372", cash: 61500000, monthly: 662307, financed: 86100000 },
+                { lot: "E-23", area: "372", cash: 61500000, monthly: 662307, financed: 86100000 }
+            ],
+            F: [
+                { lot: "F-1", area: "406", cash: 75000000, monthly: 807692, financed: 105000000 },
+                { lot: "F-2", area: "372", cash: 68000000, monthly: 732307, financed: 95200000 },
+                { lot: "F-3", area: "372", cash: 68000000, monthly: 732307, financed: 95200000 },
+                { lot: "F-4", area: "372", cash: 68000000, monthly: 732307, financed: 95200000 },
+                { lot: "F-5", area: "360", cash: 68000000, monthly: 732307, financed: 95200000 },
+                { lot: "F-6", area: "360", cash: 68000000, monthly: 732307, financed: 95200000 },
+                { lot: "F-7", area: "360", cash: 68000000, monthly: 732307, financed: 95200000 },
+                { lot: "F-8", area: "360", cash: 68000000, monthly: 732307, financed: 95200000 },
+                { lot: "F-9", area: "360", cash: 68000000, monthly: 732307, financed: 95200000 },
+                { lot: "F-10", area: "372", cash: 68000000, monthly: 732307, financed: 95200000 },
+                { lot: "F-11", area: "372", cash: 68000000, monthly: 732307, financed: 95200000 },
+                { lot: "F-12", area: "372", cash: 68000000, monthly: 732307, financed: 95200000 },
+                { lot: "F-13", area: "524", cash: 95000000, monthly: 1023076, financed: 133000000 }
+            ],
+            G: [
+                { lot: "G-1", area: "372", cash: 70000000, monthly: 753846, financed: 98000000 },
+                { lot: "G-2", area: "372", cash: 70000000, monthly: 753846, financed: 98000000 },
+                { lot: "G-3", area: "372", cash: 70000000, monthly: 753846, financed: 98000000 },
+                { lot: "G-4", area: "372", cash: 70000000, monthly: 753846, financed: 98000000 },
+                { lot: "G-5", area: "372", cash: 70000000, monthly: 753846, financed: 98000000 },
+                { lot: "G-6", area: "372", cash: 70000000, monthly: 753846, financed: 98000000 },
+                { lot: "G-7", area: "372", cash: 70000000, monthly: 753846, financed: 98000000 },
+                { lot: "G-8", area: "372", cash: 70000000, monthly: 753846, financed: 98000000 },
+                { lot: "G-9", area: "396", cash: 70000000, monthly: 753846, financed: 98000000 },
+                { lot: "G-10", area: "380", cash: 70000000, monthly: 753846, financed: 98000000 },
+                { lot: "G-11", area: "372", cash: 70000000, monthly: 753846, financed: 98000000 },
+                { lot: "G-12", area: "367", cash: 70000000, monthly: 753846, financed: 98000000 },
+                { lot: "G-13", area: "391", cash: 70000000, monthly: 753846, financed: 98000000 },
+                { lot: "G-14", area: "372", cash: 70000000, monthly: 753846, financed: 98000000 },
+                { lot: "G-15", area: "372", cash: 70000000, monthly: 753846, financed: 98000000 },
+                { lot: "G-16", area: "372", cash: 70000000, monthly: 753846, financed: 98000000 },
+                { lot: "G-17", area: "372", cash: 70000000, monthly: 753846, financed: 98000000 },
+                { lot: "G-18", area: "372", cash: 70000000, monthly: 753846, financed: 98000000 },
+                { lot: "G-19", area: "372", cash: 70000000, monthly: 753846, financed: 98000000 },
+                { lot: "G-20", area: "372", cash: 70000000, monthly: 753846, financed: 98000000 },
+                { lot: "G-21", area: "372", cash: 70000000, monthly: 753846, financed: 98000000 }
+            ],
+            H: [
+                { lot: "H-1", area: "696", cash: 140000000, monthly: 1507692, financed: 196000000 },
+                { lot: "H-2", area: "360", cash: 75000000, monthly: 807692, financed: 105000000 },
+                { lot: "H-3", area: "360", cash: 75000000, monthly: 807692, financed: 105000000 },
+                { lot: "H-4", area: "360", cash: 75000000, monthly: 807692, financed: 105000000 },
+                { lot: "H-5", area: "360", cash: 75000000, monthly: 807692, financed: 105000000 },
+                { lot: "H-6", area: "360", cash: 75000000, monthly: 807692, financed: 105000000 },
+                { lot: "H-7", area: "360", cash: 75000000, monthly: 807692, financed: 105000000 },
+                { lot: "H-8", area: "360", cash: 75000000, monthly: 807692, financed: 105000000 },
+                { lot: "H-9", area: "360", cash: 75000000, monthly: 807692, financed: 105000000 },
+                { lot: "H-10", area: "360", cash: 75000000, monthly: 807692, financed: 105000000 },
+                { lot: "H-11", area: "360", cash: 75000000, monthly: 807692, financed: 105000000 },
+                { lot: "H-12", area: "360", cash: 75000000, monthly: 807692, financed: 105000000 },
+                { lot: "H-13", area: "360", cash: 75000000, monthly: 807692, financed: 105000000 },
+                { lot: "H-14", area: "360", cash: 75000000, monthly: 807692, financed: 105000000 }
+            ],
+            I: [
+                { lot: "I-1", area: "360", cash: 75000000, monthly: 807692, financed: 105000000 },
+                { lot: "I-2", area: "360", cash: 75000000, monthly: 807692, financed: 105000000 },
+                { lot: "I-3", area: "360", cash: 75000000, monthly: 807692, financed: 105000000 },
+                { lot: "I-4", area: "360", cash: 75000000, monthly: 807692, financed: 105000000 },
+                { lot: "I-5", area: "360", cash: 75000000, monthly: 807692, financed: 105000000 },
+                { lot: "I-6", area: "360", cash: 75000000, monthly: 807692, financed: 105000000 },
+                { lot: "I-7", area: "360", cash: 75000000, monthly: 807692, financed: 105000000 },
+                { lot: "I-8", area: "360", cash: 75000000, monthly: 807692, financed: 105000000 },
+                { lot: "I-9", area: "360", cash: 75000000, monthly: 807692, financed: 105000000 },
+                { lot: "I-10", area: "360", cash: 75000000, monthly: 807692, financed: 105000000 },
+                { lot: "I-11", area: "451", cash: 90000000, monthly: 969230, financed: 126000000 },
+                { lot: "I-12", area: "378", cash: 75000000, monthly: 807692, financed: 105000000 },
+                { lot: "I-13", area: "381", cash: 75000000, monthly: 807692, financed: 105000000 },
+                { lot: "I-14", area: "433", cash: 90000000, monthly: 969230, financed: 126000000 },
+                { lot: "I-15", area: "360", cash: 75000000, monthly: 807692, financed: 105000000 },
+                { lot: "I-16", area: "360", cash: 75000000, monthly: 807692, financed: 105000000 },
+                { lot: "I-17", area: "360", cash: 75000000, monthly: 807692, financed: 105000000 },
+                { lot: "I-18", area: "360", cash: 75000000, monthly: 807692, financed: 105000000 },
+                { lot: "I-19", area: "360", cash: 75000000, monthly: 807692, financed: 105000000 },
+                { lot: "I-20", area: "360", cash: 75000000, monthly: 807692, financed: 105000000 },
+                { lot: "I-21", area: "360", cash: 75000000, monthly: 807692, financed: 105000000 },
+                { lot: "I-22", area: "360", cash: 75000000, monthly: 807692, financed: 105000000 },
+                { lot: "I-23", area: "360", cash: 75000000, monthly: 807692, financed: 105000000 },
+                { lot: "I-24", area: "360", cash: 75000000, monthly: 807692, financed: 105000000 }
+            ],
+            J: [
+                { lot: "J-1", area: "360", cash: 78000000, monthly: 840000, financed: 109200000 },
+                { lot: "J-2", area: "360", cash: 78000000, monthly: 840000, financed: 109200000 },
+                { lot: "J-3", area: "360", cash: 78000000, monthly: 840000, financed: 109200000 },
+                { lot: "J-4", area: "360", cash: 78000000, monthly: 840000, financed: 109200000 },
+                { lot: "J-5", area: "360", cash: 78000000, monthly: 840000, financed: 109200000 },
+                { lot: "J-6", area: "360", cash: 78000000, monthly: 840000, financed: 109200000 },
+                { lot: "J-7", area: "360", cash: 78000000, monthly: 840000, financed: 109200000 },
+                { lot: "J-8", area: "360", cash: 78000000, monthly: 840000, financed: 109200000 },
+                { lot: "J-9", area: "360", cash: 78000000, monthly: 840000, financed: 109200000 },
+                { lot: "J-10", area: "360", cash: 78000000, monthly: 840000, financed: 109200000 },
+                { lot: "J-11", area: "360", cash: 78000000, monthly: 840000, financed: 109200000 },
+                { lot: "J-12", area: "360", cash: 78000000, monthly: 840000, financed: 109200000 },
+                { lot: "J-13", area: "360", cash: 78000000, monthly: 840000, financed: 109200000 },
+                { lot: "J-14", area: "360", cash: 78000000, monthly: 840000, financed: 109200000 },
+                { lot: "J-15", area: "360", cash: 78000000, monthly: 840000, financed: 109200000 },
+                { lot: "J-16", area: "360", cash: 78000000, monthly: 840000, financed: 109200000 },
+                { lot: "J-17", area: "360", cash: 78000000, monthly: 840000, financed: 109200000 },
+                { lot: "J-18", area: "360", cash: 78000000, monthly: 840000, financed: 109200000 },
+                { lot: "J-19", area: "360", cash: 78000000, monthly: 840000, financed: 109200000 },
+                { lot: "J-20", area: "360", cash: 78000000, monthly: 840000, financed: 109200000 },
+                { lot: "J-21", area: "360", cash: 78000000, monthly: 840000, financed: 109200000 },
+                { lot: "J-22", area: "360", cash: 78000000, monthly: 840000, financed: 109200000 },
+                { lot: "J-23", area: "360", cash: 78000000, monthly: 840000, financed: 109200000 },
+                { lot: "J-24", area: "360", cash: 78000000, monthly: 840000, financed: 109200000 },
+                { lot: "J-25", area: "360", cash: 78000000, monthly: 840000, financed: 109200000 },
+                { lot: "J-26", area: "360", cash: 78000000, monthly: 840000, financed: 109200000 },
+                { lot: "J-27", area: "360", cash: 78000000, monthly: 840000, financed: 109200000 },
+                { lot: "J-28", area: "360", cash: 78000000, monthly: 840000, financed: 109200000 },
+                { lot: "J-29", area: "360", cash: 78000000, monthly: 840000, financed: 109200000 }
+            ],
+            K: [
+                { lot: "K-1", area: "360", cash: 78000000, monthly: 840000, financed: 109200000 },
+                { lot: "K-2", area: "360", cash: 78000000, monthly: 840000, financed: 109200000 },
+                { lot: "K-3", area: "360", cash: 78000000, monthly: 840000, financed: 109200000 },
+                { lot: "K-4", area: "360", cash: 78000000, monthly: 840000, financed: 109200000 },
+                { lot: "K-5", area: "360", cash: 78000000, monthly: 840000, financed: 109200000 },
+                { lot: "K-6", area: "360", cash: 78000000, monthly: 840000, financed: 109200000 },
+                { lot: "K-7", area: "360", cash: 78000000, monthly: 840000, financed: 109200000 },
+                { lot: "K-8", area: "360", cash: 78000000, monthly: 840000, financed: 109200000 },
+                { lot: "K-9", area: "360", cash: 78000000, monthly: 840000, financed: 109200000 },
+                { lot: "K-10", area: "360", cash: 78000000, monthly: 840000, financed: 109200000 },
+                { lot: "K-11", area: "360", cash: 78000000, monthly: 840000, financed: 109200000 },
+                { lot: "K-12", area: "360", cash: 78000000, monthly: 840000, financed: 109200000 },
+                { lot: "K-13", area: "360", cash: 78000000, monthly: 840000, financed: 109200000 },
+                { lot: "K-14", area: "360", cash: 78000000, monthly: 840000, financed: 109200000 },
+                { lot: "K-15", area: "360", cash: 78000000, monthly: 840000, financed: 109200000 },
+                { lot: "K-16", area: "360", cash: 78000000, monthly: 840000, financed: 109200000 },
+                { lot: "K-17", area: "360", cash: 78000000, monthly: 840000, financed: 109200000 },
+                { lot: "K-18", area: "360", cash: 78000000, monthly: 840000, financed: 109200000 },
+                { lot: "K-19", area: "360", cash: 78000000, monthly: 840000, financed: 109200000 },
+                { lot: "K-20", area: "360", cash: 78000000, monthly: 840000, financed: 109200000 },
+                { lot: "K-21", area: "360", cash: 78000000, monthly: 840000, financed: 109200000 },
+                { lot: "K-22", area: "360", cash: 78000000, monthly: 840000, financed: 109200000 },
+                { lot: "K-23", area: "360", cash: 78000000, monthly: 840000, financed: 109200000 },
+                { lot: "K-24", area: "360", cash: 78000000, monthly: 840000, financed: 109200000 },
+                { lot: "K-25", area: "360", cash: 78000000, monthly: 840000, financed: 109200000 },
+                { lot: "K-26", area: "360", cash: 78000000, monthly: 840000, financed: 109200000 },
+                { lot: "K-27", area: "360", cash: 78000000, monthly: 840000, financed: 109200000 },
+                { lot: "K-28", area: "360", cash: 78000000, monthly: 840000, financed: 109200000 },
+                { lot: "K-29", area: "360", cash: 78000000, monthly: 840000, financed: 109200000 }
+            ],
+            L: [
+                { lot: "L-1", area: "360", cash: 94000000, monthly: 1012307, financed: 131600000 },
+                { lot: "L-2", area: "360", cash: 94000000, monthly: 1012307, financed: 131600000 },
+                { lot: "L-3", area: "360", cash: 94000000, monthly: 1012307, financed: 131600000 },
+                { lot: "L-4", area: "360", cash: 94000000, monthly: 1012307, financed: 131600000 },
+                { lot: "L-5", area: "360", cash: 94000000, monthly: 1012307, financed: 131600000 },
+                { lot: "L-6", area: "360", cash: 94000000, monthly: 1012307, financed: 131600000 },
+                { lot: "L-7", area: "360", cash: 94000000, monthly: 1012307, financed: 131600000 },
+                { lot: "L-8", area: "360", cash: 94000000, monthly: 1012307, financed: 131600000 },
+                { lot: "L-9", area: "360", cash: 94000000, monthly: 1012307, financed: 131600000 },
+                { lot: "L-10", area: "360", cash: 94000000, monthly: 1012307, financed: 131600000 },
+                { lot: "L-11", area: "360", cash: 94000000, monthly: 1012307, financed: 131600000 },
+                { lot: "L-12", area: "360", cash: 94000000, monthly: 1012307, financed: 131600000 },
+                { lot: "L-13", area: "360", cash: 94000000, monthly: 1012307, financed: 131600000 },
+                { lot: "L-14", area: "360", cash: 94000000, monthly: 1012307, financed: 131600000 },
+                { lot: "L-15", area: "360", cash: 94000000, monthly: 1012307, financed: 131600000 },
+                { lot: "L-16", area: "360", cash: 94000000, monthly: 1012307, financed: 131600000 },
+                { lot: "L-17", area: "360", cash: 94000000, monthly: 1012307, financed: 131600000 },
+                { lot: "L-18", area: "360", cash: 94000000, monthly: 1012307, financed: 131600000 },
+                { lot: "L-19", area: "360", cash: 94000000, monthly: 1012307, financed: 131600000 },
+                { lot: "L-20", area: "360", cash: 94000000, monthly: 1012307, financed: 131600000 },
+                { lot: "L-21", area: "360", cash: 94000000, monthly: 1012307, financed: 131600000 },
+                { lot: "L-22", area: "360", cash: 94000000, monthly: 1012307, financed: 131600000 },
+                { lot: "L-23", area: "360", cash: 94000000, monthly: 1012307, financed: 131600000 },
+                { lot: "L-24", area: "360", cash: 94000000, monthly: 1012307, financed: 131600000 },
+                { lot: "L-25", area: "360", cash: 94000000, monthly: 1012307, financed: 131600000 },
+                { lot: "L-26", area: "360", cash: 94000000, monthly: 1012307, financed: 131600000 },
+                { lot: "L-27", area: "360", cash: 94000000, monthly: 1012307, financed: 131600000 },
+                { lot: "L-28", area: "120", cash: 120000000, monthly: 1292307, financed: 168000000 }
+            ],
+            M: [
+                { lot: "M-1", area: "414", cash: 110000000, monthly: 1184615, financed: 154000000 },
+                { lot: "M-2", area: "456", cash: 110000000, monthly: 1184615, financed: 154000000 },
+                { lot: "M-3", area: "390", cash: 98000000, monthly: 1055384, financed: 137200000 },
+                { lot: "M-4", area: "390", cash: 98000000, monthly: 1055384, financed: 137200000 },
+                { lot: "M-5", area: "390", cash: 98000000, monthly: 1055384, financed: 137200000 },
+                { lot: "M-6", area: "360", cash: 98000000, monthly: 1055384, financed: 137200000 },
+                { lot: "M-7", area: "360", cash: 98000000, monthly: 1055384, financed: 137200000 },
+                { lot: "M-8", area: "360", cash: 98000000, monthly: 1055384, financed: 137200000 },
+                { lot: "M-9", area: "360", cash: 98000000, monthly: 1055384, financed: 137200000 },
+                { lot: "M-10", area: "360", cash: 98000000, monthly: 1055384, financed: 137200000 },
+                { lot: "M-11", area: "388", cash: 110000000, monthly: 1184615, financed: 154000000 },
+                { lot: "M-12", area: "367", cash: 110000000, monthly: 1184615, financed: 154000000 },
+                { lot: "M-13", area: "364", cash: 110000000, monthly: 1184615, financed: 154000000 },
+                { lot: "M-14", area: "364", cash: 110000000, monthly: 1184615, financed: 154000000 }
+            ],
+            N: [
+                { lot: "N-1", area: "560", cash: 120000000, monthly: 1292307, financed: 168000000 },
+                { lot: "N-2", area: "419", cash: 110000000, monthly: 1184615, financed: 154000000 },
+                { lot: "N-3", area: "399", cash: 110000000, monthly: 1184615, financed: 154000000 },
+                { lot: "N-4", area: "383", cash: 110000000, monthly: 1184615, financed: 154000000 },
+                { lot: "N-5", area: "415", cash: 110000000, monthly: 1184615, financed: 154000000 },
+                { lot: "N-6", area: "382", cash: 108000000, monthly: 1163076, financed: 151200000 },
+                { lot: "N-7", area: "418", cash: 108000000, monthly: 1163076, financed: 151200000 },
+                { lot: "N-8", area: "514", cash: 110000000, monthly: 1184615, financed: 154000000 },
+                { lot: "N-9", area: "467", cash: 108000000, monthly: 1163076, financed: 151200000 },
+                { lot: "N-10", area: "420", cash: 108000000, monthly: 1163076, financed: 151200000 },
+                { lot: "N-11", area: "373", cash: 108000000, monthly: 1163076, financed: 151200000 },
+                { lot: "N-12", area: "364", cash: 108000000, monthly: 1163076, financed: 151200000 },
+                { lot: "N-13", area: "362", cash: 108000000, monthly: 1163076, financed: 151200000 }
+            ]
+        };
+
+        (function mergeStoredPrices() {
+            try {
+                const raw = localStorage.getItem("vamer_cms_prices");
+                if (!raw) return;
+                const parsed = JSON.parse(raw);
+                if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) officialPriceData = parsed;
+            } catch (e) {}
+        })();
+
+        function formatGs(value) {
+            return `Gs. ${value.toLocaleString("es-PY")}`;
+        }
+
+        function renderPriceBlock(blockKey) {
+            const tbody = document.getElementById("price-table-body");
+            const rows = officialPriceData[blockKey] || [];
+            const cotizarLabel = String(window.__VAMER_COTIZAR_LABEL || "Cotizar").replace(/</g, "");
+
+            tbody.innerHTML = rows.map((row) => `
+                <tr>
+                    <td class="p-3 font-semibold">${row.lot}</td>
+                    <td class="p-3">${row.area}</td>
+                    <td class="p-3 font-bold text-vamerBlue">${formatGs(row.cash)}</td>
+                    <td class="p-3">${formatGs(row.monthly)}</td>
+                    <td class="p-3">${formatGs(row.financed)}</td>
+                    <td class="p-3">
+                        <button onclick="activateCuoteroFromTable('${row.lot}', ${row.cash})" class="px-3 py-1.5 rounded-lg bg-vamerBlue text-white text-xs font-bold hover:bg-vamerBlueSoft transition">
+                            ${cotizarLabel}
+                        </button>
+                    </td>
+                </tr>
+            `).join("");
+            const prices = rows.map((row) => row.cash);
+            const monthly = rows.map((row) => row.monthly);
+            const min = prices.length ? Math.min(...prices) : 0;
+            const max = prices.length ? Math.max(...prices) : 0;
+            const avgMonthly = monthly.length ? Math.round(monthly.reduce((sum, value) => sum + value, 0) / monthly.length) : 0;
+
+            document.getElementById("summary-lots").innerText = rows.length;
+            document.getElementById("summary-min").innerText = formatGs(min);
+            document.getElementById("summary-max").innerText = formatGs(max);
+            document.getElementById("summary-avg").innerText = formatGs(avgMonthly);
+            document.getElementById("price-block-select").value = blockKey;
+        }
+
+        function activateCuoteroFromTable(lotId, cashPrice) {
+            selectLot(lotId, cashPrice, "disponible");
+            document.getElementById("cuotero-active").scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+
+        function getTasaByPlazo(plazo) {
+            if (plazo <= 24) return 1.35;
+            if (plazo <= 48) return 1.45;
+            if (plazo <= 72) return 1.55;
+            if (plazo <= 96) return 1.6;
+            return 1.65;
+        }
+
+        function updateCuota() {
+            if (!selectedLotPrice) return;
+            const plazo = Number(document.getElementById("plazo-slider").value);
+            document.getElementById("display-plazo").innerText = plazo;
+            const entrega = Math.round(selectedLotPrice * 0.1);
+            const saldo = selectedLotPrice - entrega;
+            const tasaMensual = getTasaByPlazo(plazo) / 100;
+
+            const factor = (tasaMensual * Math.pow(1 + tasaMensual, plazo)) / (Math.pow(1 + tasaMensual, plazo) - 1);
+            const cuota = Math.round(saldo * factor);
+
+            document.getElementById("display-cuota").innerText = cuota.toLocaleString("es-PY");
+            document.getElementById("display-entrega").innerText = `Gs. ${entrega.toLocaleString("es-PY")}`;
+            document.getElementById("display-tasa").innerText = `${(tasaMensual * 100).toFixed(2)}%`;
+        }
+
+        function loginSimulado() {
+            showView("admin");
+        }
+
+        (async function initVamer() {
+            try {
+                if (window.VAMER_CMS) await window.VAMER_CMS.loadAndApply();
+            } catch (err) {
+                console.warn("[VAMER CMS]", err.message || err);
+            }
+            const contactBtn = document.getElementById("cms-btn-contacto");
+            if (contactBtn) {
+                contactBtn.onclick = function () {
+                    const cfg = window.__VAMER_SITE_CFG;
+                    const u = window.__VAMER_WHATSAPP_LEADS || (cfg && cfg.integration && cfg.integration.whatsappUrl);
+                    if (u) window.open(u, "_blank");
+                };
+            }
+            setLandingMode("presentation");
+            renderPriceBlock("A");
+            showView("landing");
+        })();
+    </script>
+</body>
+</html>
